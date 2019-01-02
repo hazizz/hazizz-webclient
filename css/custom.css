@@ -1,0 +1,73 @@
+/* Backgrounds */
+.bg-red {
+    background-color: #f23c50;
+}
+
+.bg-grey {
+    background-color: #e9f1df;
+}
+
+.bg-lblue {
+    background-color: #4ad9d9;
+}
+
+.bg-blue {
+    background-color: #4995d9;
+}
+
+.bg-green {
+    background-color: #49d96b;
+}
+
+.bg-yellow {
+    background-color: #ffcb05;
+}
+
+.bg-darker {
+    background-color: #e9f1df;
+}
+
+/* Navigation */
+.brand-logo {
+    max-height: 100px;
+    margin: -50% 0;
+}
+
+.list-group-item.active {
+    background-color: #f23c50 !important;
+}
+
+.list-group-item{
+    background-color: #e9f1df !important;
+}
+
+/* Addon */
+.anchor {
+    position: absolute;
+    left: 0;
+    top: -70px;
+}
+
+/* Signin */
+.signig-logo{
+    max-width: 100px;
+}
+
+/* Fonts */
+.title-font-family{
+    font-family: "Architects Daughter";
+}
+
+.description-font-family{
+    font-family: "Bentham";
+}
+
+@font-face {
+    font-family: 'Architects Daughter';
+    src: url('../assets/ArchitectsDaughter.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Bentham';
+    src: url('../assets/Bentham.otf') format('opentype');
+}
