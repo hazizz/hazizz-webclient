@@ -1,3 +1,8 @@
+/* Container */
+.custom-container{
+    max-width: 1400px;
+}
+
 /* Backgrounds */
 .bg-red {
     background-color: #f23c50;
