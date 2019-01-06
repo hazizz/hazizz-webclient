@@ -1,5 +1,14 @@
+/* Layout */
+.select:hover {
+    color: red;
+}
+
+.select-bg:hover{
+    background-color: rgba(0,0,0,0.05);
+}
+
 /* Container */
-.custom-container{
+.custom-container {
     max-width: 1400px;
 }
 
@@ -42,7 +51,7 @@
     background-color: #f23c50 !important;
 }
 
-.list-group-item{
+.list-group-item {
     background-color: #e9f1df !important;
 }
 
@@ -54,16 +63,16 @@
 }
 
 /* Signin */
-.signig-logo{
+.signig-logo {
     max-width: 100px;
 }
 
 /* Fonts */
-.title-font-family{
+.title-font-family {
     font-family: "Architects Daughter";
 }
 
-.description-font-family{
+.description-font-family {
     font-family: "Bentham";
 }
 
