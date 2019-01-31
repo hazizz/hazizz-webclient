@@ -75,6 +75,41 @@ function ListGroups() {
         };
     });
 
+    self.ajax(self.baseURI + 'me/tasks', 'GET', 'json').done(function (data) {
+        var rdata = [];
+        for (var i = 0; i < data.length; i++) {
+            switch (data[i].type.name) {
+                case "homework":
+                    data[i].type.name = "Házi feladat";
+                    break;
+                case "assigment":
+                    data[i].type.name = "Beadandó";
+                    break;
+                case "test":
+                    data[i].type.name = "Teszt";
+                    break;
+                case "oral test":
+                    data[i].type.name = "Felelet"
+                    break;
+                default:
+                    data[i].type.name = "Egyéb";
+                    break;
+            }
+            data[i].dueDate = moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true);
+            rdata.push({
+                id: data[i].id,
+                type: data[i].type.name,
+                title: data[i].title,
+                description: data[i].description,
+                dueDate: data[i].dueDate,
+                creator: data[i].creator.displayName,
+                subject: data[i].subject.name,
+                group: data[i].group.name
+            });
+        }
+        self.alltasks(rdata);
+    });
+
     // GET the task, on click.
     self.tasks = function (group) {
         console.log("Tasks got from: #" + group.id())
@@ -106,7 +141,7 @@ function ListGroups() {
                     description: data[i].description,
                     dueDate: data[i].dueDate,
                     creator: data[i].creator.displayName,
-                    subject: data[i].subject
+                    subject: data[i].subject.name
                 });
             }
             self.alltasks(rdata);

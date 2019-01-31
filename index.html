@@ -19,7 +19,7 @@
     <!-- Icon -->
     <link rel="icon" href="assets/icon.png" type="image/png">
 </head>
-<body>
+<body class="hazizz-bg-white">
 
 <!-- Create group modal -->
 <div class="modal fade" id="newGroupModal" tabindex="-1" role="dialog" aria-labelledby="newGroupModalTitle"
@@ -89,8 +89,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
-                <button data-bind="click: createGroup" type="submit" class="btn btn-primary">Létrehozás</button>
+                <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
+                <button data-bind="click: createGroup" type="submit" class="btn hazizz-btn-blue">Létrehozás</button>
             </div>
         </div>
     </div>
@@ -140,8 +140,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
-                <button data-bind="click: searchGroup" type="submit" class="btn btn-primary">Keresés</button>
+                <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
+                <button data-bind="click: searchGroup" type="submit" class="btn hazizz-btn-blue">Keresés</button>
             </div>
         </div>
     </div>
@@ -150,10 +150,10 @@
 
 <div class="row" id="groups">
     <div class="col-3">
-        <div class="row p-2 bg-grey text-center">
-            <div class="col-5 border-right border-dark"><span>Név</span></div>
-            <div class="col-4 border-right border-dark"><span>Típus</span></div>
-            <div class="col-3"><span>Létszám</span></div>
+        <div class="row p-2 hazizz-dbg-blue text-center">
+            <div class="col-5 border-right border-dark">Név</div>
+            <div class="col-4 border-right border-dark">Típus</div>
+            <div class="col-3">Létszám</div>
         </div>
         <div data-bind="visible: groups().lenght <= 0" class="row px-2 text-center">
             <div class="col-12">
@@ -162,7 +162,7 @@
         </div>
         <!-- ko foreach: groups -->
         <a data-bind="click: $parent.tasks">
-            <div class="row px-2 text-center select">
+            <div class="row px-2 text-center groups-highlighter">
                 <div class="col-5 text-truncate" data-bind="text: name"></div>
                 <div class="col-4 text-truncate" data-bind="text: groupType"></div>
                 <div class="col-3 text-truncate" data-bind="text: userCount"></div>
@@ -171,12 +171,12 @@
         <hr class="my-1 mx-3">
         <!-- /ko -->
         <div class="w-100 p-1 text-center">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newGroupModal">
+            <button type="button" class="btn hazizz-btn-blue" data-toggle="modal" data-target="#newGroupModal">
                 Új csoport létrehozása
             </button>
         </div>
         <div class="w-100 p-1 text-center">
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#joinGroupModal">
+            <button type="button" class="btn hazizz-btn-lightblue" data-toggle="modal" data-target="#joinGroupModal">
                 Csatlakozás meglévő csoporthoz
             </button>
         </div>
@@ -185,10 +185,12 @@
         <h2 data-bind="visible: alltasks() <= 0" class="description-font-family p-5 text-center text-muted w-100">
             Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!</h2>
         <!-- ko foreach: alltasks -->
-        <div class="row p-2 select-bg">
+        <div class="row p-2 task-highlighter">
             <div class="col-8">
-                <span><h5 data-bind="text: title" class="d-inline font-weight-bold m-0"></h5> &ndash; <p
-                        data-bind="text: type" class="d-inline m-0 lead"></p></span>
+                <span>
+                    <h5 data-bind="text: title" class="d-inline font-weight-bold m-0"></h5>
+                    <span data-bind="visible: subject">&ndash; <p data-bind="text: subject" class="d-inline m-0 lead"></p></span>
+                </span>
                 <div class="row px-4">
                     <div class="col-12">
                         <p data-bind="text: description" class="small text-muted m-0"></p>
@@ -200,12 +202,14 @@
                     <div class="col-7 text-right px-0">
                         Hátra van:<br>
                         Létrehozta:<br>
-                        <span data-bind="visible: subject">Tantárgy:</span>
+                        <span data-bind="visible: group">Csoport:<br></span>
+                        Típus:
                     </div>
                     <div class="col-5 text-left px-1">
                         <span data-bind="text: dueDate"></span><br>
                         <span data-bind="text: creator"></span><br>
-                        <span data-bind="text: subject, visible: subject"></span>
+                        <span data-bind="text: group, visible: group"></span>
+                        <span data-bind="text: type"></span>
                     </div>
                 </div>
             </div>
