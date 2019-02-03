@@ -1,11 +1,12 @@
 function ListGroups() {
     var self = this;
-    self.baseURI = 'https://hazizz.duckdns.org:8081/'
     if (Cookies.get('token')){
         self.token = Cookies.get('token');
     } else {
         window.location.href = "login.html";
     }
+
+    self.baseURI = 'https://hazizz.duckdns.org:8081/';
     self.groups = ko.observableArray();
     self.alltasks = ko.observableArray();
     self.groupName = ko.observable();
@@ -13,6 +14,8 @@ function ListGroups() {
     self.groupPassword = ko.observable();
     self.joinGroupName = ko.observable();
     self.joinableGroups = ko.observableArray();
+    self.headerGroup = ko.observable("");
+    self.fromGroup = ko.observable(false);
 
     /**
      *
@@ -47,7 +50,7 @@ function ListGroups() {
             }
         }
         return $.ajax(request);
-    }
+    };
 
     // GET the groups
     self.ajax(self.baseURI + 'me/groups', 'GET', 'json').done(function (data) {
@@ -67,54 +70,19 @@ function ListGroups() {
                     break;
             }
             self.groups.push({
-                id: ko.observable(data[i].id),
-                name: ko.observable(data[i].name),
-                groupType: ko.observable(data[i].groupType),
-                userCount: ko.observable(data[i].userCount)
+                id: data[i].id,
+                name: data[i].name,
+                groupType: data[i].groupType,
+                userCount: data[i].userCount,
+                uniqueName: data[i].uniqueName
             });
         };
     });
 
-    self.ajax(self.baseURI + 'me/tasks', 'GET', 'json').done(function (data) {
-        var rdata = [];
-        for (var i = 0; i < data.length; i++) {
-            switch (data[i].type.name) {
-                case "homework":
-                    data[i].type.name = "Házi feladat";
-                    break;
-                case "assigment":
-                    data[i].type.name = "Beadandó";
-                    break;
-                case "test":
-                    data[i].type.name = "Teszt";
-                    break;
-                case "oral test":
-                    data[i].type.name = "Felelet"
-                    break;
-                default:
-                    data[i].type.name = "Egyéb";
-                    break;
-            }
-            data[i].dueDate = moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true);
-            rdata.push({
-                id: data[i].id,
-                type: data[i].type.name,
-                title: data[i].title,
-                description: data[i].description,
-                dueDate: data[i].dueDate,
-                creator: data[i].creator.displayName,
-                subject: data[i].subject.name,
-                group: data[i].group.name
-            });
-        }
-        self.alltasks(rdata);
-    });
-
-    // GET the task, on click.
-    self.tasks = function (group) {
-        console.log("Tasks got from: #" + group.id())
-        self.ajax(self.baseURI + 'tasks/groups/' + group.id(), 'GET', 'json').done(function (data) {
-            var rdata = [];
+    var getAllTasks = function (){
+        self.ajax(self.baseURI + 'me/tasks', 'GET', 'json').done(function (data) {
+            self.alltasks([]);
+            self.fromGroup(false);
             for (var i = 0; i < data.length; i++) {
                 switch (data[i].type.name) {
                     case "homework":
@@ -127,24 +95,67 @@ function ListGroups() {
                         data[i].type.name = "Teszt";
                         break;
                     case "oral test":
-                        data[i].type.name = "Felelet"
+                        data[i].type.name = "Felelet";
                         break;
                     default:
                         data[i].type.name = "Egyéb";
                         break;
-                }
+                };
                 data[i].dueDate = moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true);
-                rdata.push({
+                self.alltasks.push({
                     id: data[i].id,
                     type: data[i].type.name,
                     title: data[i].title,
                     description: data[i].description,
                     dueDate: data[i].dueDate,
                     creator: data[i].creator.displayName,
-                    subject: data[i].subject.name
+                    subject: data[i].subject.name,
+                    group: data[i].group.name
                 });
-            }
-            self.alltasks(rdata);
+            };
+        });
+    };
+    getAllTasks();
+    self.getAllTasks = getAllTasks;
+
+    // GET the task, on click.
+    self.tasks = function (group) {
+        console.log("Tasks got from: #" + group.id)
+        self.headerGroup(group)
+        console.log(self.headerGroup().name)
+        self.ajax(self.baseURI + 'me/tasks/groups/' + group.id, 'GET', 'json').done(function (data) {
+            self.alltasks([]);
+            self.fromGroup(true);
+            for (var i = 0; i < data.length; i++) {
+                switch (data[i].type.name) {
+                    case "homework":
+                        data[i].type.name = "Házi feladat";
+                        break;
+                    case "assigment":
+                        data[i].type.name = "Beadandó";
+                        break;
+                    case "test":
+                        data[i].type.name = "Teszt";
+                        break;
+                    case "oral test":
+                        data[i].type.name = "Felelet";
+                        break;
+                    default:
+                        data[i].type.name = "Egyéb";
+                        break;
+                };
+                data[i].dueDate = moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true);
+                self.alltasks.push({
+                    id: data[i].id,
+                    type: data[i].type.name,
+                    title: data[i].title,
+                    description: data[i].description,
+                    dueDate: data[i].dueDate,
+                    creator: data[i].creator.displayName,
+                    subject: data[i].subject.name,
+                    group: data[i].group.name
+                });
+            };
         });
     };
 
@@ -181,7 +192,7 @@ function ListGroups() {
                     default:
                         data[i].groupType = "Egyéb"
                         break;
-                }
+                };
                 if (self.joinGroupName() == data[i].name){
                     self.joinableGroups.push({
                         id: data[i].id,
@@ -190,18 +201,18 @@ function ListGroups() {
                         groupType: data[i].groupType,
                         userCount: data[i].userCount
                     });
-                }
-            }
+                };
+            };
             console.log(self.joinableGroups());
-        })
-    }
+        });
+    };
 
     //JOIN a group.
     self.joinGroup = function (group) {
         self.ajax(self.baseURI + 'me/joingroup/uname/' + group.uniqueName, 'GET', 'text').done(function () {
             $('#joinGroupModal').modal('hide');
-        })
-    }
+        });
+    };
 };
 
 ko.applyBindings(new ListGroups(), $('#groups')[0]);

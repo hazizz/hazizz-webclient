@@ -149,7 +149,7 @@
 <!-- /Join group modal -->
 
 <div class="row" id="groups">
-    <div class="col-3">
+    <div class="col-sm-3">
         <div class="row p-2 hazizz-dbg-blue text-center">
             <div class="col-5 border-right border-dark">Név</div>
             <div class="col-4 border-right border-dark">Típus</div>
@@ -170,6 +170,10 @@
         </a>
         <hr class="my-1 mx-3">
         <!-- /ko -->
+        <a data-bind="click: getAllTasks">
+            <div class="px-2 text-center groups-highlighter">Összes feladat</div>
+        </a>
+        <hr class="my-1 mx-3">
         <div class="w-100 p-1 text-center">
             <button type="button" class="btn hazizz-btn-blue" data-toggle="modal" data-target="#newGroupModal">
                 Új csoport létrehozása
@@ -181,9 +185,15 @@
             </button>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-sm-6">
+        <div data-bind="visible: fromGroup" class="row p-2 hazizz-dbg-blue">
+            <div class="col border-right border-dark">Csoport neve: <span data-bind="text: headerGroup().name"></span></div>
+            <div class="col border-right border-dark">Csoport megosztható neve: <span data-bind="text: headerGroup().uniqueName"></span></div>
+            <div class="col">Tagok:</div>
+        </div>
         <h2 data-bind="visible: alltasks() <= 0" class="description-font-family p-5 text-center text-muted w-100">
-            Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!</h2>
+            Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!
+        </h2>
         <!-- ko foreach: alltasks -->
         <div class="row p-2 task-highlighter">
             <div class="col-8">
@@ -202,13 +212,15 @@
                     <div class="col-7 text-right px-0">
                         Hátra van:<br>
                         Létrehozta:<br>
-                        <span data-bind="visible: group">Csoport:<br></span>
+                        <span data-bind="ifnot: $parent.fromGroup">Csoport:<br></span>
                         Típus:
                     </div>
                     <div class="col-5 text-left px-1">
                         <span data-bind="text: dueDate"></span><br>
                         <span data-bind="text: creator"></span><br>
-                        <span data-bind="text: group, visible: group"></span>
+                        <!-- ko ifnot: $parent.fromGroup -->
+                        <span data-bind="text: group"></span>
+                        <!-- /ko -->
                         <span data-bind="text: type"></span>
                     </div>
                 </div>
@@ -216,7 +228,8 @@
         </div>
         <!-- /ko -->
     </div>
-    <div class="col-3">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur consequuntur cumque, fugiat
+    <div class="col-sm-3">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur consequuntur cumque, fugiat
         iusto, nam non obcaecati pariatur perspiciatis quasi ratione rerum, sapiente. Dicta exercitationem expedita
         mollitia nihil quos, reiciendis velit?
     </div>
