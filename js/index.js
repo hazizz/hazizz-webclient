@@ -1,23 +1,42 @@
 function ListGroups() {
     var self = this;
-    self.groupsURI = 'https://hazizz.duckdns.org:8081/me/groups';
-    self.grouptasksURI = 'https://hazizz.duckdns.org:8081/tasks/groups/';
-    self.permissionsURI = 'https://hazizz.duckdns.org:8081/me/permissions';
     if (Cookies.get('token')){
         self.token = Cookies.get('token');
     } else {
         window.location.href = "login.html";
     }
+
+    self.baseURI = 'https://hazizz.duckdns.org:8081/';
     self.groups = ko.observableArray();
     self.alltasks = ko.observableArray();
+    self.groupName = ko.observable();
+    self.groupType = ko.observable();
+    self.groupPassword = ko.observable();
+    self.joinGroupName = ko.observable();
+    self.joinableGroups = ko.observableArray();
+    self.headerGroup = ko.observable("");
+    self.fromGroup = ko.observable(false);
 
-    self.ajax = function (uri, method, data) {
+    /**
+     *
+     * @param uri
+     *      String, URL where the request will be sent.
+     * @param method
+     *      String, http method, GET or POST.
+     * @param type
+     *      String, data type, 'json' is recommended.
+     * @param data
+     *      Object, the data which is sent in the body.
+     * @returns {*}
+     *      Error or success.
+     */
+    self.ajax = function (uri, method, type, data) {
         var request = {
             url: uri,
             type: method,
             contentType: "application/json",
             cache: false,
-            dataType: 'json',
+            dataType: type,
             data: JSON.stringify(data),
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", "Bearer " + self.token);
@@ -31,9 +50,10 @@ function ListGroups() {
             }
         }
         return $.ajax(request);
-    }
+    };
 
-    self.ajax(self.groupsURI, 'GET').done(function (data) {
+    // GET the groups
+    self.ajax(self.baseURI + 'me/groups', 'GET', 'json').done(function (data) {
         for (var i = 0; i < data.length; i++) {
             switch (data[i].groupType) {
                 case "OPEN":
@@ -50,18 +70,19 @@ function ListGroups() {
                     break;
             }
             self.groups.push({
-                id: ko.observable(data[i].id),
-                name: ko.observable(data[i].name),
-                groupType: ko.observable(data[i].groupType),
-                userCount: ko.observable(data[i].userCount)
+                id: data[i].id,
+                name: data[i].name,
+                groupType: data[i].groupType,
+                userCount: data[i].userCount,
+                uniqueName: data[i].uniqueName
             });
         };
     });
 
-    self.tasks = function (group) {
-        console.log("Tasks got from: #" + group.id())
-        self.ajax(self.grouptasksURI + group.id(), 'GET').done(function (data) {
-            var rdata = [];
+    var getAllTasks = function (){
+        self.ajax(self.baseURI + 'me/tasks', 'GET', 'json').done(function (data) {
+            self.alltasks([]);
+            self.fromGroup(false);
             for (var i = 0; i < data.length; i++) {
                 switch (data[i].type.name) {
                     case "homework":
@@ -74,65 +95,72 @@ function ListGroups() {
                         data[i].type.name = "Teszt";
                         break;
                     case "oral test":
-                        data[i].type.name = "Felelet"
+                        data[i].type.name = "Felelet";
                         break;
                     default:
                         data[i].type.name = "Egyéb";
                         break;
-                }
+                };
                 data[i].dueDate = moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true);
-                rdata.push({
+                self.alltasks.push({
                     id: data[i].id,
                     type: data[i].type.name,
                     title: data[i].title,
                     description: data[i].description,
                     dueDate: data[i].dueDate,
                     creator: data[i].creator.displayName,
-                    subject: data[i].subject
+                    subject: data[i].subject.name,
+                    group: data[i].group.name
                 });
-            }
-            self.alltasks(rdata);
+            };
         });
     };
-};
+    getAllTasks();
+    self.getAllTasks = getAllTasks;
 
-ko.applyBindings(new ListGroups(), $('#groups')[0]);
+    // GET the task, on click.
+    self.tasks = function (group) {
+        console.log("Tasks got from: #" + group.id)
+        self.headerGroup(group)
+        console.log(self.headerGroup().name)
+        self.ajax(self.baseURI + 'me/tasks/groups/' + group.id, 'GET', 'json').done(function (data) {
+            self.alltasks([]);
+            self.fromGroup(true);
+            for (var i = 0; i < data.length; i++) {
+                switch (data[i].type.name) {
+                    case "homework":
+                        data[i].type.name = "Házi feladat";
+                        break;
+                    case "assigment":
+                        data[i].type.name = "Beadandó";
+                        break;
+                    case "test":
+                        data[i].type.name = "Teszt";
+                        break;
+                    case "oral test":
+                        data[i].type.name = "Felelet";
+                        break;
+                    default:
+                        data[i].type.name = "Egyéb";
+                        break;
+                };
+                data[i].dueDate = moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true);
+                self.alltasks.push({
+                    id: data[i].id,
+                    type: data[i].type.name,
+                    title: data[i].title,
+                    description: data[i].description,
+                    dueDate: data[i].dueDate,
+                    creator: data[i].creator.displayName,
+                    subject: data[i].subject.name,
+                    group: data[i].group.name
+                });
+            };
+        });
+    };
 
-function AddGroups(){
-    var self = this;
-    self.createURI = 'https://hazizz.duckdns.org:8081/groups';
-    if (Cookies.get('token')){
-        self.token = Cookies.get('token');
-    } else {
-        window.location.href = "login.html";
-    }
-    self.groupName = ko.observable();
-    self.groupType = ko.observable();
-    self.groupPassword = ko.observable();
-
-    self.ajax = function (uri, method, data) {
-        var request = {
-            url: uri,
-            type: method,
-            contentType: "application/json",
-            cache: false,
-            dataType: 'text',
-            data: JSON.stringify(data),
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + self.token);
-            },
-            error: function (jqXHR) {
-                console.log("Error code: " + jqXHR.status);
-                console.log("Error message: " + jqXHR.responseText);
-            },
-            success: function (jqXHR) {
-                console.log("Success!")
-            }
-        }
-        return $.ajax(request);
-    }
-
-    self.create = function () {
+    // CREATE a group.
+    self.createGroup = function () {
         console.log("Group created! Group name: " + self.groupName() + ", group type: " + self.groupType());
         var data;
         if (self.groupType() == "PASSWORD"){
@@ -140,13 +168,56 @@ function AddGroups(){
         } else{
             data = {"groupName":self.groupName(), "type":self.groupType()};
         }
-        self.ajax(self.createURI, 'POST', data).done(function () {
+        self.ajax(self.baseURI + 'groups', 'POST', 'text', data).done(function () {
             $('#newGroupModal').modal('hide');
             self.groupName("");
         });
     };
+
+    //SEARCH a group.
+    self.searchGroup = function () {
+        self.ajax(self.baseURI + 'groups', 'GET', 'json').done(function (data) {
+            for (var i = 0; i < data.length; i++) {
+                console.log(i + ": " + self.joinGroupName() + " == " +  data[i].name);
+                switch (data[i].groupType) {
+                    case "OPEN":
+                        data[i].groupType = "Nyitott";
+                        break;
+                    case "INVITE_ONLY":
+                        data[i].groupType = "Meghívás alapú"
+                        break;
+                    case "PASSWORD":
+                        data[i].groupType = "Jelszó védett"
+                        break;
+                    default:
+                        data[i].groupType = "Egyéb"
+                        break;
+                };
+                if (self.joinGroupName() == data[i].name){
+                    self.joinableGroups.push({
+                        id: data[i].id,
+                        name: data[i].name,
+                        uniqueName: data[i].uniqueName,
+                        groupType: data[i].groupType,
+                        userCount: data[i].userCount
+                    });
+                };
+            };
+            console.log(self.joinableGroups());
+        });
+    };
+
+    //JOIN a group.
+    self.joinGroup = function (group) {
+        self.ajax(self.baseURI + 'me/joingroup/uname/' + group.uniqueName, 'GET', 'text').done(function () {
+            $('#joinGroupModal').modal('hide');
+        });
+    };
 };
-ko.applyBindings(new AddGroups(), $('#newGroup')[0]);
+
+ko.applyBindings(new ListGroups(), $('#groups')[0]);
+ko.applyBindings(new ListGroups(), $('#newGroup')[0]);
+ko.applyBindings(new ListGroups(), $('#joinGroup')[0]);
 
 /* DEV */
 function logout() {

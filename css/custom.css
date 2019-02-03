@@ -1,65 +1,128 @@
+/*
+
+RED: #f23c50
+WHITE: #e9f1df
+LIGHTBLUE: #4ad9d9
+BLUE: #36b1bf
+YELLOW: #ffcb05
+
+(DARK) RED: #eb6896
+(DARK) DARKRED: #c66894
+(DARK) BLUERED: #836890
+(DARK) LIGHTBLUE: #46698d
+(DARK) BLUE: #0f6a8b
+ */
+
 /* Layout */
-.select:hover {
-    color: red;
+.groups-highlighter:hover {
+    color: #f23c50;
 }
 
-.select-bg:hover{
+.task-highlighter:hover{
     background-color: rgba(0,0,0,0.05);
 }
 
-/* Container */
-.custom-container {
-    max-width: 1400px;
+/* Button colors */
+.hazizz-dbtn-red{
+    color: #000;
+    background-color: #eb6896;
+    border-color: #eb6896;
+}
+
+.hazizz-dbtn-darkred{
+    color: #000;
+    background-color: #c66894;
+    border-color: #c66894;
+}
+
+.hazizz-dbtn-bluered{
+    color: #fff;
+    background-color: #836890;
+    border-color: #836890;
+}
+
+.hazizz-dbtn-lightblue{
+    color: #fff;
+    background-color: #46698d;
+    border-color: #46698d;
+}
+
+.hazizz-dbtn-blue{
+    color: #fff;
+    background-color: #0f6a8b;
+    border-color: #0f6a8b;
+}
+
+.hazizz-btn-red{
+    color: #fff;
+    background-color: #f23c50;
+    border-color: #f23c50;
+}
+
+.hazizz-btn-white{
+    color: #000;
+    background-color: #e9f1df;
+    border-color: #e9f1df;
+}
+
+.hazizz-btn-lightblue{
+    color: #000;
+    background-color: #4ad9d9;
+    border-color: #4ad9d9;
+}
+
+.hazizz-btn-blue{
+    color: #000;
+    background-color: #36b1bf;
+    border-color: #36b1bf;
+}
+
+.hazizz-btn-yellow{
+    color: #000;
+    background-color: #ffcb05;
+    border-color: #ffcb05;
 }
 
 /* Backgrounds */
-.bg-red {
+.hazizz-dbg-red{
+    background-color: #eb6896;
+}
+
+.hazizz-dbg-darkred{
+    background-color: #c66894;
+}
+
+.hazizz-dbg-bluered{
+    background-color: #836890;
+}
+
+.hazizz-dbg-lightblue{
+    background-color: #46698d;
+}
+
+.hazizz-dbg-blue{
+    color: #fff;
+    background-color: #0f6a8b;
+}
+
+.hazizz-bg-red {
     background-color: #f23c50;
 }
 
-.bg-grey {
+.hazizz-bg-white {
     background-color: #e9f1df;
 }
 
-.bg-lblue {
+.hazizz-bg-lightblue {
     background-color: #4ad9d9;
 }
 
-.bg-blue {
-    background-color: #4995d9;
+.hazizz-bg-blue {
+    background-color: #36b1bf;
 }
 
-.bg-green {
-    background-color: #49d96b;
-}
-
-.bg-yellow {
+.hazizz-bg-yellow {
     background-color: #ffcb05;
-}
-
-.bg-darker {
-    background-color: #e9f1df;
-}
-
-/* Navigation */
-.brand-logo {
-    max-height: 100px;
-    margin: -50% 0;
-}
-
-.list-group-item.active {
-    background-color: #f23c50 !important;
-}
-
-.list-group-item {
-    background-color: #e9f1df !important;
-}
-
-/* Addon */
-.anchor {
-    position: absolute;
-    left: 0;
-    top: -70px;
 }
 
 /* Signin */
