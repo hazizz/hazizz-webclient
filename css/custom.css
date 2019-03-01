@@ -13,6 +13,11 @@ YELLOW: #ffcb05
 (DARK) BLUE: #0f6a8b
  */
 
+/* Text */
+.small-spaceing{
+    letter-spacing: -0.75px;
+}
+
 /* Layout */
 .groups-highlighter:hover {
     color: #f23c50;

@@ -19,7 +19,27 @@
     <!-- Icon -->
     <link rel="icon" href="assets/icon.png" type="image/png">
 </head>
-<body class="hazizz-bg-white">
+<body id="whole" class="hazizz-bg-white">
+<!-- Error modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalTitle" aria-hidden="true" style="z-index: 1051">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 data-bind="text: errorTitle" class="modal-title" id="errorModalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p data-bind="text: errorBody" class="text-left text-break"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Error modal -->
 
 <!-- Create group modal -->
 <div class="modal fade" id="newGroupModal" tabindex="-1" role="dialog" aria-labelledby="newGroupModalTitle"
@@ -37,7 +57,7 @@
                     <div class="form-group row">
                         <label for="groupName" class="col-3 col-form-label">Csoport neve:</label>
                         <div class="col-9">
-                            <input data-bind="value: groupName" type="text" class="form-control" id="groupName"
+                            <input data-bind="value: newGroupName" type="text" class="form-control" id="groupName"
                                    placeholder="Csoport neve">
                         </div>
                     </div>
@@ -46,43 +66,43 @@
                             <legend class="col-form-label col-3 pt-0">Csoport típusa:</legend>
                             <div class="col-9">
                                 <div class="form-check form-check-inline">
-                                    <input data-bind="checked: groupType" class="form-check-input" type="radio"
+                                    <input data-bind="checked: newGroupType" class="form-check-input" type="radio"
                                            name="groupType" id="openGroup" value="OPEN">
                                     <label class="form-check-label" for="openGroup">
                                         Nyitott
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input data-bind="checked: groupType" class="form-check-input" type="radio"
+                                    <input data-bind="checked: newGroupType" class="form-check-input" type="radio"
                                            name="groupType" id="passwordGroup" value="PASSWORD">
                                     <label class="form-check-label" for="passwordGroup">
                                         Jelszó védett
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input data-bind="checked: groupType" class="form-check-input" type="radio"
+                                    <input data-bind="checked: newGroupType" class="form-check-input" type="radio"
                                            name="groupType" id="inviteGroup" value="INVITE_ONLY">
                                     <label class="form-check-label" for="inviteGroup">
                                         Meghívásos alapú
                                     </label>
                                 </div>
-                                <div data-bind="visible: groupType() == 'OPEN'" class="small text-muted">Nyitott csoport
+                                <div data-bind="visible: newGroupType() == 'OPEN'" class="small text-muted">Nyitott csoport
                                     azt jelenti, hogy bárki csatlakozhat hozzá, elég hozzá a csoport nevét tudnia.
                                 </div>
-                                <div data-bind="visible: groupType() == 'PASSWORD'" class="small text-muted">Jelszó
+                                <div data-bind="visible: newGroupType() == 'PASSWORD'" class="small text-muted">Jelszó
                                     védett csoport azt jelenti, hogy bárki csatlakozhat, aki tudja a csoporthoz tartozó
                                     jelszót.
                                 </div>
-                                <div data-bind="visible: groupType() == 'INVITE_ONLY'" class="small text-muted">A
+                                <div data-bind="visible: newGroupType() == 'INVITE_ONLY'" class="small text-muted">A
                                     meghívásos alapú csoportba csak azok csatlakozhatnak, akik meghívást kapnak hozzá.
                                 </div>
                             </div>
                         </div>
                     </fieldset>
-                    <div data-bind="visible: groupType() == 'PASSWORD'" class="form-group row">
+                    <div data-bind="visible: newGroupType() == 'PASSWORD'" class="form-group row">
                         <label for="groupName" class="col-3 col-form-label">Csoport jelszava:</label>
                         <div class="col-9">
-                            <input data-bind="value: groupPassword" type="password" class="form-control"
+                            <input data-bind="value: newGroupPassword" type="password" class="form-control"
                                    id="groupPassword" placeholder="Csoport jelszó">
                         </div>
                     </div>
@@ -148,19 +168,21 @@
 </div>
 <!-- /Join group modal -->
 
-<div class="row" id="groups">
+<div class="row">
+
+    <!-- Group listing -->
     <div class="col-sm-3">
         <div class="row p-2 hazizz-dbg-blue text-center">
             <div class="col-5 border-right border-dark">Név</div>
             <div class="col-4 border-right border-dark">Típus</div>
             <div class="col-3">Létszám</div>
         </div>
-        <div data-bind="visible: groups().lenght <= 0" class="row px-2 text-center">
+        <div data-bind="visible: myGroups().lenght <= 0" class="row px-2 text-center">
             <div class="col-12">
                 Nem vagy tagja egyetlen csoportnak sem.
             </div>
         </div>
-        <!-- ko foreach: groups -->
+        <!-- ko foreach: myGroups -->
         <a data-bind="click: $parent.tasks">
             <div class="row px-2 text-center groups-highlighter">
                 <div class="col-5 text-truncate" data-bind="text: name"></div>
@@ -185,49 +207,62 @@
             </button>
         </div>
     </div>
+    <!-- /Group listing -->
+
+    <!-- Task listing -->
     <div class="col-sm-6">
         <div data-bind="visible: fromGroup" class="row p-2 hazizz-dbg-blue">
-            <div class="col border-right border-dark">Csoport neve: <span data-bind="text: headerGroup().name"></span></div>
-            <div class="col border-right border-dark">Csoport megosztható neve: <span data-bind="text: headerGroup().uniqueName"></span></div>
-            <div class="col">Tagok:</div>
+            <div class="col-auto border-right border-dark text-truncate">Csoport neve: <span data-bind="text: headerGroup().name"></span></div>
+            <div class="col-auto text-truncate">Tagok:
+                <!-- ko foreach: headerGroup().users -->
+                    <!-- ko if: $index() == 0 -->
+                    <span data-bind="text: displayName"></span>
+                    <!-- /ko -->
+                    <!-- ko if: $index() > 0 && $index() <= 4 -->
+                    | <span data-bind="text: displayName"></span>
+                    <!-- /ko -->
+                    <!-- ko if: $index() == 5 -->
+                    és még több
+                    <!-- /ko -->
+                <!-- /ko -->
+            </div>
         </div>
-        <h2 data-bind="visible: alltasks() <= 0" class="description-font-family p-5 text-center text-muted w-100">
+        <h2 data-bind="visible: myTasks() <= 0" class="description-font-family p-5 text-center text-muted w-100">
             Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!
         </h2>
-        <!-- ko foreach: alltasks -->
-        <div class="row p-2 task-highlighter">
-            <div class="col-8">
-                <span>
-                    <h5 data-bind="text: title" class="d-inline font-weight-bold m-0"></h5>
-                    <span data-bind="visible: subject">&ndash; <p data-bind="text: subject" class="d-inline m-0 lead"></p></span>
-                </span>
+        <!-- ko foreach: myTasks -->
+        <div data-bind="click: $parent.comments " class="row p-2 task-highlighter">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <span>
+                            <h5 data-bind="text: title" class="d-inline font-weight-bold m-0"></h5>
+                            <span data-bind="visible: subject">&ndash; <p data-bind="text: subject" class="d-inline m-0 lead"></p></span>
+                        </span>
+                    </div>
+                </div>
                 <div class="row px-4">
                     <div class="col-12">
                         <p data-bind="text: description" class="small text-muted m-0"></p>
                     </div>
                 </div>
-            </div>
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-7 text-right px-0">
-                        Hátra van:<br>
-                        Létrehozta:<br>
-                        <span data-bind="ifnot: $parent.fromGroup">Csoport:<br></span>
-                        Típus:
-                    </div>
-                    <div class="col-5 text-left px-1">
-                        <span data-bind="text: dueDate"></span><br>
-                        <span data-bind="text: creator"></span><br>
+                <div class="row justify-content-between">
+                    <div class="col-auto text-truncate">Hátra van: <span data-bind="text: dueDate"></span></div>
+                    <div class="col-auto text-truncate">Létrehozta: <span data-bind="text: creator"></span></div>
+                    <div class="col-auto text-truncate">Típus: <span data-bind="text: type"></span></div>
+                    <div class="col-auto text-truncate">
+                        <span data-bind="ifnot: $parent.fromGroup">Csoport:</span>
                         <!-- ko ifnot: $parent.fromGroup -->
                         <span data-bind="text: group"></span>
                         <!-- /ko -->
-                        <span data-bind="text: type"></span>
                     </div>
                 </div>
             </div>
         </div>
         <!-- /ko -->
     </div>
+    <!-- /Task listing -->
+
     <div class="col-sm-3">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur consequuntur cumque, fugiat
         iusto, nam non obcaecati pariatur perspiciatis quasi ratione rerum, sapiente. Dicta exercitationem expedita
