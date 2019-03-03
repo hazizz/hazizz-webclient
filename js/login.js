@@ -1,10 +1,15 @@
 function UserLogin() {
     var self = this;
-    self.username = ko.observable();
-    self.password = ko.observable();
-    self.rememberMe = ko.observable();
-    self.crypt = ko.observable();
-    self.URI = 'https://hazizz.duckdns.org:8081/auth/';
+    self.username = ko.observable("");
+    if(Cookies.get('username')){
+        self.username = ko.observable(Cookies.get('username'));
+    }
+    self.password = ko.observable("");
+    self.rememberMe = ko.observable(false);
+
+    self.errorTitle = ko.observable("");
+    self.errorBody = ko.observable("");
+    self.URI = 'https://hazizz.duckdns.org:9000/auth-server/auth/accesstoken';
 
     self.ajax = function (uri, method, data) {
         var request = {
@@ -13,60 +18,50 @@ function UserLogin() {
             contentType: "application/json",
             cache: false,
             dataType: 'json',
-            data: JSON.stringify(data),
-            error: function (jqXHR) {
-                console.log("Error code: " + jqXHR.status);
-                console.log("Error message: " + jqXHR.responseText);
-            },
-            success: function (jqXHR) {
-                console.log("Success!");
-            }
+            data: JSON.stringify(data)
         };
         return $.ajax(request);
     }
 
-    if(Cookies.get('refresh')){
-        self.ajax(self.URI, 'POST', {"username": Cookies.get('username'), "refreshToken": Cookies.get('refresh')}).done(function (data){
-            Cookies.remove('token'); //DEV
-            Cookies.remove('refresh'); //DEV
-            console.log('######### AUTH WITH REFRESH #########')
-            Cookies.set('token', data.token, {expire: 1});
-            console.log("Token: " + Cookies.get('token'));
-            Cookies.set('refresh', data.refresh, {expire: 7});
-            console.log("Refresh: " + Cookies.get('refresh'));
-            self.username("");
-            self.password("");
-            self.rememberMe(false);
-            window.location.href = "index.html";
-        });
+    if(Cookies.get('refresh') && Cookies.get('username')){
+        self.ajax(self.URI, 'POST', {"username": Cookies.get('username'), "refreshToken": Cookies.get('refresh')})
+            .done(function (data){
+                Cookies.set('token', data.token, {expire: 1});
+                Cookies.set('refresh', data.refresh, {expire: 7});
+
+                self.username("");
+                self.password("");
+                self.rememberMe(false);
+                window.location.href = "index.html";
+            })
+            .fail(function (data) {
+                console.log(data.getAllResponseHeaders());
+            });
     }
 
     self.login = function () {
-        var data;
-        if (self.crypt() == true) {
-            data = {"username": self.username(), "password": sha256(self.password())};
-        }else{
-            data = {"username": self.username(), "password": self.password()};
+        if (self.username() && self.password()) {
+            var data = {"username": self.username(), "password": sha256(self.password())};
+
+            self.ajax(self.URI, 'POST', data)
+                .done(function (data) {
+                    Cookies.set('token', data.token, {expire: 1});
+                    Cookies.set('refresh', data.refresh, {expire: 7});
+                    if(self.rememberMe()){
+                        Cookies.set('username', self.username());
+                    }
+
+                    self.username("");
+                    self.password("");
+                    self.rememberMe(false);
+                    window.location.href = "index.html";
+                })
+                .fail(function (data) {
+                    self.errorBody(data.responseJSON.message);
+                    self.errorTitle(data.responseJSON.title);
+                    $("#errorModal").modal('show');
+                });
         }
-        console.log("Sima (JSON): " + JSON.stringify({"username": self.username(), "password": self.password()}));
-        console.log("Cryped (JSON): " + JSON.stringify({"username": self.username(), "password": sha256(self.password())}));
-        console.log("Elküldve (JSON): " + JSON.stringify(data));
-        self.ajax(self.URI, 'POST', data).done(function (data) {
-            Cookies.remove('token'); //DEV
-            Cookies.remove('refresh'); //DEV
-            Cookies.remove('username'); //DEV
-            Cookies.set('token', data.token, {expire: 1});
-            console.log("Token: " + Cookies.get('token'));
-            if(self.rememberMe()){
-                Cookies.set('username', self.username(), {expire: 7});
-                Cookies.set('refresh', data.refresh, {expire: 7});
-                console.log("Refresh: " + Cookies.get('refresh'));
-            }
-            self.username("");
-            self.password("");
-            self.rememberMe(false);
-            window.location.href = "index.html";
-        });
     }
 }
 

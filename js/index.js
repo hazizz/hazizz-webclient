@@ -1,35 +1,33 @@
-function ListGroups() {
+function Index() {
     var self = this;
     if (Cookies.get('token')){
         self.token = Cookies.get('token');
-    } else {
+    }else {
         window.location.href = "login.html";
     }
+    self.baseURI = 'https://hazizz.duckdns.org:9000';
 
-    self.baseURI = 'https://hazizz.duckdns.org:8081/';
-    self.groups = ko.observableArray();
-    self.alltasks = ko.observableArray();
-    self.groupName = ko.observable();
-    self.groupType = ko.observable();
-    self.groupPassword = ko.observable();
-    self.joinGroupName = ko.observable();
-    self.joinableGroups = ko.observableArray();
+    self.myGroups = ko.observableArray("");
+    self.myTasks = ko.observableArray("");
+
+    self.commentBody = ko.observable("");
+    self.comments = ko.observableArray("");
+    self.currentTaskId = 0;
+    self.headerTask = ko.observable("");
+
+    self.newGroupName = ko.observable("");
+    self.newGroupType = ko.observable("");
+    self.newGroupPassword = ko.observable("");
+
+    self.joinGroupName = ko.observable("");
+    self.joinGroupPassword = ko.observable("");
+    self.joinableGroups = ko.observableArray("");
     self.headerGroup = ko.observable("");
     self.fromGroup = ko.observable(false);
 
-    /**
-     *
-     * @param uri
-     *      String, URL where the request will be sent.
-     * @param method
-     *      String, http method, GET or POST.
-     * @param type
-     *      String, data type, 'json' is recommended.
-     * @param data
-     *      Object, the data which is sent in the body.
-     * @returns {*}
-     *      Error or success.
-     */
+    self.errorTitle = ko.observable();
+    self.errorBody = ko.observable();
+
     self.ajax = function (uri, method, type, data) {
         var request = {
             url: uri,
@@ -40,184 +38,271 @@ function ListGroups() {
             data: JSON.stringify(data),
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", "Bearer " + self.token);
-            },
-            error: function (jqXHR) {
-                console.log("Error code: " + jqXHR.status);
-                console.log("Error message: " + jqXHR.responseText);
-            },
-            success: function (jqXHR) {
-                console.log("Success!")
             }
         }
         return $.ajax(request);
     };
 
     // GET the groups
-    self.ajax(self.baseURI + 'me/groups', 'GET', 'json').done(function (data) {
-        for (var i = 0; i < data.length; i++) {
-            switch (data[i].groupType) {
-                case "OPEN":
-                    data[i].groupType = "Nyitott";
-                    break;
-                case "INVITE_ONLY":
-                    data[i].groupType = "Mhívás alp."
-                    break;
-                case "PASSWORD":
-                    data[i].groupType = "Jelszó v."
-                    break;
-                default:
-                    data[i].groupType = "Egyéb"
-                    break;
-            }
-            self.groups.push({
-                id: data[i].id,
-                name: data[i].name,
-                groupType: data[i].groupType,
-                userCount: data[i].userCount,
-                uniqueName: data[i].uniqueName
-            });
-        };
-    });
-
-    var getAllTasks = function (){
-        self.ajax(self.baseURI + 'me/tasks', 'GET', 'json').done(function (data) {
-            self.alltasks([]);
-            self.fromGroup(false);
+    self.ajax(self.baseURI + '/hazizz-server/me/groups', 'GET', 'json')
+        .done(function (data) {
             for (var i = 0; i < data.length; i++) {
-                switch (data[i].type.name) {
-                    case "homework":
-                        data[i].type.name = "Házi feladat";
-                        break;
-                    case "assigment":
-                        data[i].type.name = "Beadandó";
-                        break;
-                    case "test":
-                        data[i].type.name = "Teszt";
-                        break;
-                    case "oral test":
-                        data[i].type.name = "Felelet";
-                        break;
-                    default:
-                        data[i].type.name = "Egyéb";
-                        break;
-                };
-                data[i].dueDate = moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true);
-                self.alltasks.push({
-                    id: data[i].id,
-                    type: data[i].type.name,
-                    title: data[i].title,
-                    description: data[i].description,
-                    dueDate: data[i].dueDate,
-                    creator: data[i].creator.displayName,
-                    subject: data[i].subject.name,
-                    group: data[i].group.name
-                });
-            };
-        });
-    };
-    getAllTasks();
-    self.getAllTasks = getAllTasks;
-
-    // GET the task, on click.
-    self.tasks = function (group) {
-        console.log("Tasks got from: #" + group.id)
-        self.headerGroup(group)
-        console.log(self.headerGroup().name)
-        self.ajax(self.baseURI + 'me/tasks/groups/' + group.id, 'GET', 'json').done(function (data) {
-            self.alltasks([]);
-            self.fromGroup(true);
-            for (var i = 0; i < data.length; i++) {
-                switch (data[i].type.name) {
-                    case "homework":
-                        data[i].type.name = "Házi feladat";
-                        break;
-                    case "assigment":
-                        data[i].type.name = "Beadandó";
-                        break;
-                    case "test":
-                        data[i].type.name = "Teszt";
-                        break;
-                    case "oral test":
-                        data[i].type.name = "Felelet";
-                        break;
-                    default:
-                        data[i].type.name = "Egyéb";
-                        break;
-                };
-                data[i].dueDate = moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true);
-                self.alltasks.push({
-                    id: data[i].id,
-                    type: data[i].type.name,
-                    title: data[i].title,
-                    description: data[i].description,
-                    dueDate: data[i].dueDate,
-                    creator: data[i].creator.displayName,
-                    subject: data[i].subject.name,
-                    group: data[i].group.name
-                });
-            };
-        });
-    };
-
-    // CREATE a group.
-    self.createGroup = function () {
-        console.log("Group created! Group name: " + self.groupName() + ", group type: " + self.groupType());
-        var data;
-        if (self.groupType() == "PASSWORD"){
-            data = {"groupName":self.groupName(), "type":self.groupType(), "password":self.groupPassword()};
-        } else{
-            data = {"groupName":self.groupName(), "type":self.groupType()};
-        }
-        self.ajax(self.baseURI + 'groups', 'POST', 'text', data).done(function () {
-            $('#newGroupModal').modal('hide');
-            self.groupName("");
-        });
-    };
-
-    //SEARCH a group.
-    self.searchGroup = function () {
-        self.ajax(self.baseURI + 'groups', 'GET', 'json').done(function (data) {
-            for (var i = 0; i < data.length; i++) {
-                console.log(i + ": " + self.joinGroupName() + " == " +  data[i].name);
+                console.log(data[i]);
                 switch (data[i].groupType) {
                     case "OPEN":
                         data[i].groupType = "Nyitott";
                         break;
                     case "INVITE_ONLY":
-                        data[i].groupType = "Meghívás alapú"
+                        data[i].groupType = "Mhívás alp."
                         break;
                     case "PASSWORD":
-                        data[i].groupType = "Jelszó védett"
+                        data[i].groupType = "Jelszó v."
                         break;
                     default:
                         data[i].groupType = "Egyéb"
                         break;
-                };
-                if (self.joinGroupName() == data[i].name){
-                    self.joinableGroups.push({
+                }
+                self.myGroups.push({
+                    id: data[i].id,
+                    name: data[i].name,
+                    groupType: data[i].groupType,
+                    userCount: data[i].userCount,
+                });
+            };
+        })
+        .fail(function (data) {
+            self.errorTitle(data.responseJSON.title);
+            self.errorBody(data.responseJSON.message);
+            $('#errorModal').modal('show');
+        });
+
+    var getAllTasks = function (){
+        self.ajax(self.baseURI + '/hazizz-server/me/tasks', 'GET', 'json')
+            .done(function (data) {
+                self.myTasks([]);
+                self.fromGroup(false);
+                for (var i = 0; i < data.length; i++) {
+                    switch (data[i].type.name) {
+                        case "homework":
+                            data[i].type.name = "Házi feladat";
+                            break;
+                        case "assigment":
+                            data[i].type.name = "Beadandó";
+                            break;
+                        case "test":
+                            data[i].type.name = "Teszt";
+                            break;
+                        case "oral test":
+                            data[i].type.name = "Felelet";
+                            break;
+                        default:
+                            data[i].type.name = "Egyéb";
+                            break;
+                    };
+                    data[i].dueDate = moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true);
+                    self.myTasks.push({
                         id: data[i].id,
-                        name: data[i].name,
-                        uniqueName: data[i].uniqueName,
-                        groupType: data[i].groupType,
-                        userCount: data[i].userCount
+                        type: data[i].type.name,
+                        title: data[i].title,
+                        description: data[i].description,
+                        dueDate: data[i].dueDate,
+                        creator: data[i].creator.displayName,
+                        subject: data[i].subject.name,
+                        group: data[i].group.name,
+                        groupId: data[i].group.id
                     });
                 };
-            };
-            console.log(self.joinableGroups());
+            })
+            .fail(function (data) {
+                self.errorTitle(data.responseJSON.title);
+                self.errorBody(data.responseJSON.message);
+                $('#errorModal').modal('show');
+            });
+    };
+    getAllTasks()
+    self.getAllTasks = getAllTasks;
+
+    var setHeaderGroup = function(group){
+        self.ajax(self.baseURI + '/hazizz-server/groups/' + group.id + '/details', 'GET', 'json')
+            .done(function (data) {
+                self.headerGroup({
+                    name: data.name,
+                    users: data.users
+                })
+            })
+            .fail(function (data) {
+                self.errorTitle(data.responseJSON.title);
+                self.errorBody(data.responseJSON.message);
+                $('#errorModal').modal('show');
+            });
+    }
+
+    // GET the tasks, on click.
+    self.tasks = function (group) {
+        setHeaderGroup(group);
+        self.ajax(self.baseURI + '/hazizz-server/me/tasks/groups/' + group.id, 'GET', 'json')
+            .done(function (data) {
+                self.myTasks([]);
+                self.fromGroup(true);
+                for (var i = 0; i < data.length; i++) {
+                    switch (data[i].type.name) {
+                        case "homework":
+                            data[i].type.name = "Házi feladat";
+                            break;
+                        case "assigment":
+                            data[i].type.name = "Beadandó";
+                            break;
+                        case "test":
+                            data[i].type.name = "Teszt";
+                            break;
+                        case "oral test":
+                            data[i].type.name = "Felelet";
+                            break;
+                        default:
+                            data[i].type.name = "Egyéb";
+                            break;
+                    };
+                    data[i].dueDate = moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true);
+                    self.myTasks.push({
+                        id: data[i].id,
+                        type: data[i].type.name,
+                        title: data[i].title,
+                        description: data[i].description,
+                        dueDate: data[i].dueDate,
+                        creator: data[i].creator.displayName,
+                        subject: data[i].subject.name,
+                        group: data[i].group.name,
+                        groupId: data[i].group.id
+                    });
+                };
+            })
+            .fail(function (data) {
+                self.errorTitle(data.responseJSON.title);
+                self.errorBody(data.responseJSON.message);
+                $('#errorModal').modal('show');
+            });
+    };
+
+    // CREATE a group.
+    self.createGroup = function () {
+        var data;
+        if (self.newGroupType() == "PASSWORD"){
+            data = {"groupName":self.newGroupName(), "type":self.newGroupType(), "password":self.newGroupPassword()};
+        } else{
+            data = {"groupName":self.newGroupName(), "type":self.newGroupType()};
+        }
+        self.ajax(self.baseURI + '/hazizz-server/groups', 'POST', 'text', data)
+            .done(function () {
+                $('#newGroupModal').modal('hide');
+                self.newGroupName("");
+            })
+            .fail(function (data) {
+                self.errorTitle(data.responseJSON.title);
+                self.errorBody(data.responseJSON.message);
+                $('#errorModal').modal('show');
+            });
+    };
+
+    //SEARCH a group.
+    self.searchGroup = function () {
+        self.ajax(self.baseURI + '/hazizz-server/groups', 'GET', 'json')
+            .done(function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    switch (data[i].groupType) {
+                        case "OPEN":
+                            data[i].groupType = "Nyitott";
+                            break;
+                        case "INVITE_ONLY":
+                            data[i].groupType = "Meghívás alapú"
+                            break;
+                        case "PASSWORD":
+                            data[i].groupType = "Jelszó védett"
+                            break;
+                        default:
+                            data[i].groupType = "Egyéb"
+                            break;
+                    };
+                    if (self.joinGroupName() == data[i].name){
+                        self.joinableGroups.push({
+                            id: data[i].id,
+                            name: data[i].name,
+                            groupType: data[i].groupType,
+                            userCount: data[i].userCount
+                        });
+                    };
+                };
+            })
+            .fail(function (data) {
+                self.errorTitle(data.responseJSON.title);
+                self.errorBody(data.responseJSON.message);
+                $('#errorModal').modal('show');
         });
     };
 
     //JOIN a group.
     self.joinGroup = function (group) {
-        self.ajax(self.baseURI + 'me/joingroup/uname/' + group.uniqueName, 'GET', 'text').done(function () {
-            $('#joinGroupModal').modal('hide');
-        });
+        if (group.type == 'Jelszó védett') {
+            self.ajax(self.baseURI + '/hazizz-server/me/joingroup/' + group.id + '/' + self.joinGroupPassword(), 'GET', 'text')
+                .done(function () {
+                    $('#joinGroupModal').modal('hide');
+                })
+                .fail(function (data) {
+                    self.errorTitle(data.responseJSON.title);
+                    self.errorBody(data.responseJSON.message);
+                    $('#errorModal').modal('show');
+                });
+        }else {
+            self.ajax(self.baseURI + '/hazizz-server/me/joingroup/' + group.id, 'GET', 'text')
+                .done(function () {
+                    $('#joinGroupModal').modal('hide');
+                })
+                .fail(function (data) {
+                    self.errorTitle(data.responseJSON.title);
+                    self.errorBody(data.responseJSON.message);
+                    $('#errorModal').modal('show');
+                });
+        }
     };
+
+    self.getComments = function (task) {
+        self.currentTaskId = task.id;
+        self.ajax(self.baseURI + '/hazizz-server/tasks/' + task.id + '/comments')
+            .done(function (data) {
+                self.headerTask(task.title)
+                self.comments([])
+                for (var i = 0; i < data.length; i++) {
+                    self.comments.push({
+                        content: data[i].content,
+                        date: moment(data[i].creationDate).format("MMM. DD. - HH:mm"),
+                        creatorName: data[i].creator.displayName
+                    });
+                }
+            })
+            .fail(function (data) {
+                self.errorTitle(data.responseJSON.title);
+                self.errorBody(data.responseJSON.message);
+                $('#errorModal').modal('show');
+            });
+    }
+
+    self.sendComment = function (data) {
+        var data = {"content":self.commentBody()};
+        console.log(self.baseURI + '/tasks/' + self.currentTaskId + '/comments')
+        console.log(data)
+        self.ajax(self.baseURI + '/hazizz-server/tasks/' + self.currentTaskId + '/comments', 'POST', 'text', data)
+            .done(function (data) {
+                self.commentBody("");
+            })
+            .fail(function (data) {
+                console.log(data)
+                self.errorTitle(data.responseJSON.title);
+                self.errorBody(data.responseJSON.message);
+                $('#errorModal').modal('show');
+            });
+    }
 };
 
-ko.applyBindings(new ListGroups(), $('#groups')[0]);
-ko.applyBindings(new ListGroups(), $('#newGroup')[0]);
-ko.applyBindings(new ListGroups(), $('#joinGroup')[0]);
+ko.applyBindings(new Index(), $('#whole')[0]);
 
 /* DEV */
 function logout() {
