@@ -9,7 +9,7 @@ function UserLogin() {
 
     self.errorTitle = ko.observable("");
     self.errorBody = ko.observable("");
-    self.URI = 'https://hazizz.duckdns.org:8081/auth/';
+    self.URI = 'https://hazizz.duckdns.org:9000/auth-server/auth/accesstoken';
 
     self.ajax = function (uri, method, data) {
         var request = {
@@ -24,15 +24,19 @@ function UserLogin() {
     }
 
     if(Cookies.get('refresh') && Cookies.get('username')){
-        self.ajax(self.URI, 'POST', {"username": Cookies.get('username'), "refreshToken": Cookies.get('refresh')}).done(function (data){
-            Cookies.set('token', data.token, {expire: 1});
-            Cookies.set('refresh', data.refresh, {expire: 7});
+        self.ajax(self.URI, 'POST', {"username": Cookies.get('username'), "refreshToken": Cookies.get('refresh')})
+            .done(function (data){
+                Cookies.set('token', data.token, {expire: 1});
+                Cookies.set('refresh', data.refresh, {expire: 7});
 
-            self.username("");
-            self.password("");
-            self.rememberMe(false);
-            window.location.href = "index.html";
-        });
+                self.username("");
+                self.password("");
+                self.rememberMe(false);
+                window.location.href = "index.html";
+            })
+            .fail(function (data) {
+                console.log(data.getAllResponseHeaders());
+            });
     }
 
     self.login = function () {

@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
@@ -131,7 +131,7 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group row">
-                        <label for="groupName" class="col-3 col-form-label">Csoport neve:</label>
+                        <label for="joinGroupName" class="col-3 col-form-label">Csoport neve:</label>
                         <div class="col-9">
                             <input data-bind="value: joinGroupName" type="text" class="form-control" id="joinGroupName"
                                    placeholder="Csoport neve">
@@ -139,7 +139,7 @@
                     </div>
                 </form>
                 <div data-bind="visible: joinableGroups().length > 0">
-                    <h3 class="description-font-family">Az alábbi csoportokból válassz:</h3>
+                    <h3>Az alábbi csoportokból válassz:</h3>
                     <div class="card-columns">
                         <!-- ko foreach: joinableGroups -->
                         <div class="card">
@@ -149,9 +149,15 @@
                             <div class="card-body text-center">
                                 <p class="card-text">
                                     Csoport típusa: <span data-bind="text: groupType"></span><br>
-                                    Csoport azonosítója: <span data-bind="text: uniqueName"></span><br>
                                     Csoport létszáma: <span data-bind="text: userCount"></span><br>
                                 </p>
+                                <form data-bind="if: groupType == 'Jelszó védett'">
+                                    <div class="form-group">
+                                        <label for="joinGroupPassword" class="col-form-label">Jelszó:</label>
+                                        <input data-bind="value: $parent.joinGroupPassword" type="password" class="form-control" id="joinGroupPassword"
+                                                   placeholder="Csoport jelszava">
+                                    </div>
+                                </form>
                                 <button data-bind="click: $parent.joinGroup" class="btn btn-primary">Választás</button>
                             </div>
                         </div>
@@ -168,10 +174,11 @@
 </div>
 <!-- /Join group modal -->
 
+<div class="custom-container">
 <div class="row">
 
     <!-- Group listing -->
-    <div class="col-sm-3">
+    <div class="col-sm-3 overflow-auto custom-h-100">
         <div class="row p-2 hazizz-dbg-blue text-center">
             <div class="col-5 border-right border-dark">Név</div>
             <div class="col-4 border-right border-dark">Típus</div>
@@ -210,7 +217,16 @@
     <!-- /Group listing -->
 
     <!-- Task listing -->
-    <div class="col-sm-6">
+    <div class="col-sm-6 overflow-auto custom-h-100">
+        <div class="btn-group btn-group-toggle d-none" data-toggle="buttons">
+            <label class="btn hazizz-btn-lightblue active">
+                <input type="radio" name="options" id="option1" autocomplete="off" checked>Feladatok
+            </label>
+            <label class="btn hazizz-btn-lightblue">
+                <input type="radio" name="options" id="option2" autocomplete="off">Feljegyzések
+            </label>
+        </div>
+
         <div data-bind="visible: fromGroup" class="row p-2 hazizz-dbg-blue">
             <div class="col-auto border-right border-dark text-truncate">Csoport neve: <span data-bind="text: headerGroup().name"></span></div>
             <div class="col-auto text-truncate">Tagok:
@@ -231,7 +247,7 @@
             Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!
         </h2>
         <!-- ko foreach: myTasks -->
-        <div data-bind="click: $parent.comments " class="row p-2 task-highlighter">
+        <div data-bind="click: $parent.getComments " class="row p-2 task-highlighter">
             <div class="col-12">
                 <div class="row">
                     <div class="col-12">
@@ -260,14 +276,56 @@
             </div>
         </div>
         <!-- /ko -->
+
+        <div class="w-100 p-1 text-center">
+            <button type="button" class="btn hazizz-btn-blue" data-toggle="modal" data-target="#newTask">
+                Új feladat létrehozása
+            </button>
+        </div>
     </div>
     <!-- /Task listing -->
 
-    <div class="col-sm-3">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur consequuntur cumque, fugiat
-        iusto, nam non obcaecati pariatur perspiciatis quasi ratione rerum, sapiente. Dicta exercitationem expedita
-        mollitia nihil quos, reiciendis velit?
+    <!-- Comment listing -->
+    <div class="col-sm-3 overflow-auto custom-h-100">
+        <div data-bind="visible: comments().length > 0" class="row p-2 hazizz-dbg-blue">
+            <div class="col-12 text-truncate"><span class="font-italic" data-bind="text: headerTask"></span> kommentjei:</div>
+        </div>
+
+        <!-- ko foreach: comments -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-3">
+                            <span data-bind="text: creatorName"></span>
+                        </div>
+                        <div class="col-9 text-right">
+                            <span data-bind="text: date"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <span data-bind="text: content" class="px-2 text-muted"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- /ko -->
+
+        <!-- ko if: comments().length > 0 -->
+        <hr>
+        <from data-bind="">
+            <div class="form-group">
+                <label for="comment">Kommentelj:</label>
+                <textarea data-bind="value: commentBody" class="form-control" id="comment" rows="2"></textarea>
+            </div>
+            <div class="form-group text-right">
+                <input data-bind="click: sendComment" class="btn hazizz-btn-lightblue" type="button" value="Küldés!">
+            </div>
+        </from>
+        <!-- /ko -->
     </div>
+    <!-- /Comment listing -->
+</div>
 </div>
 
 <!-- Optional JavaScript -->
@@ -279,8 +337,8 @@
 <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.4.2.js"></script>
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment-with-locales.min.js"></script>
 <script>
     moment.locale('hu');
