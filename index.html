@@ -304,15 +304,36 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <span data-bind="text: content" class="px-2 text-muted"></span>
+                            <div data-bind="text: content" class="px-2 text-muted"></div>
                         </div>
                     </div>
+                    <!-- ko if: reply -->
+                    <!-- ko foreach: reply -->
+                    <div data-bind="using: reply" class="row ml-2">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-3">
+                                    <span data-bind="text: creatorName"></span>
+                                </div>
+                                <div class="col-9 text-right">
+                                    <span data-bind="text: date"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div data-bind="text: content" class="px-2 text-muted"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                    <!-- /ko -->
                 </div>
             </div>
+            <hr class="m-0 mx-2">
         <!-- /ko -->
 
         <!-- ko if: comments().length > 0 -->
-        <hr>
         <from data-bind="">
             <div class="form-group">
                 <label for="comment">Kommentelj:</label>

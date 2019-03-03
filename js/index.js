@@ -12,7 +12,9 @@ function Index() {
 
     self.commentBody = ko.observable("");
     self.comments = ko.observableArray("");
-    self.currentTaskId = 0;
+    self.currentTask;
+    self.replyIds = [];
+    self.commentIds = [];
     self.headerTask = ko.observable("");
 
     self.newGroupName = ko.observable("");
@@ -265,18 +267,40 @@ function Index() {
     };
 
     self.getComments = function (task) {
-        self.currentTaskId = task.id;
+        self.currentTask = task;
         self.ajax(self.baseURI + '/hazizz-server/tasks/' + task.id + '/comments')
             .done(function (data) {
                 self.headerTask(task.title)
                 self.comments([])
                 for (var i = 0; i < data.length; i++) {
+                    if (data[i].children) {
+                        for (var j = 0; j < data[i].children.length; j++) {
+                            data[i].children[j] = {
+                                id: data[i].children[j].id,
+                                content: data[i].children[j].content,
+                                date: moment(data[i].children[j].creationDate).format("MMM. DD. - HH:mm"),
+                                dateValue: new Date(data[i].children[j].creationDate),
+                                creatorName: data[i].children[j].creator.displayName,
+                            }
+                            self.replyIds.push(data[i].children[j].id)
+                        }
+                    }
                     self.comments.push({
+                        id: data[i].id,
+                        reply: data[i].children,
                         content: data[i].content,
                         date: moment(data[i].creationDate).format("MMM. DD. - HH:mm"),
-                        creatorName: data[i].creator.displayName
+                        dateValue: new Date(data[i].creationDate),
+                        creatorName: data[i].creator.displayName,
                     });
+                    self.commentIds.push(data[i].id)
                 }
+                self.comments.remove(function (item) {
+                    return self.replyIds.includes(item.id);
+                })
+                self.comments.sort(function (a, b) {
+                    return a.dateValue - b.dateValue;
+                })
             })
             .fail(function (data) {
                 self.errorTitle(data.responseJSON.title);
@@ -285,13 +309,12 @@ function Index() {
             });
     }
 
-    self.sendComment = function (data) {
+    self.sendComment = function () {
         var data = {"content":self.commentBody()};
-        console.log(self.baseURI + '/tasks/' + self.currentTaskId + '/comments')
-        console.log(data)
-        self.ajax(self.baseURI + '/hazizz-server/tasks/' + self.currentTaskId + '/comments', 'POST', 'text', data)
+        self.ajax(self.baseURI + '/hazizz-server/tasks/' + self.currentTask.id + '/comments', 'POST', 'text', data)
             .done(function (data) {
                 self.commentBody("");
+                self.getComments(self.currentTask);
             })
             .fail(function (data) {
                 console.log(data)
