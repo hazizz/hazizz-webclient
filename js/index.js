@@ -10,9 +10,18 @@ function Index() {
     self.myGroups = ko.observableArray("");
     self.myTasks = ko.observableArray("");
 
+    self.selectedGroup = ko.observable("");
+    self.newTaskTitle = ko.observable("");
+    self.taskTypes = ko.observableArray("");
+    self.selectedTaskType = ko.observable("");
+    self.newTaskDescription = ko.observable("");
+    self.newTaskDueDate = ko.observable("");
+    self.groupSubjects = ko.observableArray("");
+    self.selectedSubject = ko.observable("");
+
     self.commentBody = ko.observable("");
     self.comments = ko.observableArray("");
-    self.currentTask;
+    self.currentTask = ko.observable("");
     self.replyIds = [];
     self.commentIds = [];
     self.headerTask = ko.observable("");
@@ -109,9 +118,9 @@ function Index() {
                         description: data[i].description,
                         dueDate: data[i].dueDate,
                         creator: data[i].creator.displayName,
-                        subject: data[i].subject.name,
-                        group: data[i].group.name,
-                        groupId: data[i].group.id
+                        subject: data[i].subject ? data[i].subject.name : "",
+                        group: data[i].group ? data[i].group.name : "",
+                        groupId: data[i].group ? data[i].group.id : ""
                     });
                 };
             })
@@ -172,9 +181,9 @@ function Index() {
                         description: data[i].description,
                         dueDate: data[i].dueDate,
                         creator: data[i].creator.displayName,
-                        subject: data[i].subject.name,
-                        group: data[i].group.name,
-                        groupId: data[i].group.id
+                        subject: data[i].subject ? data[i].subject.name : "",
+                        group: data[i].group ? data[i].group.name : "",
+                        groupId: data[i].group ? data[i].group.id : ""
                     });
                 };
             })
@@ -267,7 +276,7 @@ function Index() {
     };
 
     self.getComments = function (task) {
-        self.currentTask = task;
+        self.currentTask(task);
         self.ajax(self.baseURI + '/hazizz-server/tasks/' + task.id + '/comments')
             .done(function (data) {
                 self.headerTask(task.title)
@@ -307,7 +316,7 @@ function Index() {
                 self.errorBody(data.responseJSON.message);
                 $('#errorModal').modal('show');
             });
-    }
+    };
 
     self.sendComment = function () {
         var data = {"content":self.commentBody()};
@@ -322,7 +331,107 @@ function Index() {
                 self.errorBody(data.responseJSON.message);
                 $('#errorModal').modal('show');
             });
+    };
+
+    self.prepareNewTask = function () {
+        self.ajax(self.baseURI + '/hazizz-server/tasks/types', 'GET', 'json')
+            .done(function (data) {
+                self.taskTypes([]);
+                for (var i = 0; i < data.length; i++){
+                    switch (data[i].name) {
+                        case "homework":
+                            data[i].name = "Házi feladat";
+                            break;
+                        case "assigment":
+                            data[i].name = "Beadandó";
+                            break;
+                        case "test":
+                            data[i].name = "Teszt";
+                            break;
+                        case "oral test":
+                            data[i].name = "Felelet";
+                            break;
+                        default:
+                            data[i].name = "Egyéb";
+                            break;
+                    };
+                    self.taskTypes.push({
+                        name: data[i].name,
+                        id: data[i].id
+                    })
+                }
+            })
+            .fail(function (data) {
+                self.errorTitle(data.responseJSON.title);
+                self.errorBody(data.responseJSON.message);
+                $('#errorModal').modal('show');
+            });
     }
+
+    self.createTask = function () {
+        var data = {
+            "taskType":self.selectedTaskType(),
+            "taskTitle":self.newTaskTitle(),
+            "description":self.newTaskDescription(),
+            "dueDate":self.newTaskDueDate()
+        }
+        if (self.selectedSubject()){
+            self.ajax(self.baseURI + "/hazizz-server/tasks/subjects/" + self.selectedSubject(), 'POST', 'text', data)
+                .done(function (data) {
+                    $('#newTaskModal').modal('hide');
+                    location.reload();
+                })
+                .fail(function (data) {
+                    self.errorTitle(data.responseJSON.title);
+                    self.errorBody(data.responseJSON.message);
+                    $('#errorModal').modal('show');
+                });
+        }else if(self.selectedGroup()){
+            self.ajax(self.baseURI + "/hazizz-server/tasks/groups/" + self.selectedGroup(), 'POST', 'text', data)
+                .done(function (data) {
+                    $('#newTaskModal').modal('hide');
+                    location.reload();
+                })
+                .fail(function (data) {
+                    self.errorTitle(data.responseJSON.title);
+                    self.errorBody(data.responseJSON.message);
+                    $('#errorModal').modal('show');
+                });
+        } else{
+            self.ajax(self.baseURI + "/hazizz-server/tasks/me", 'POST', 'text', data)
+                .done(function (data) {
+                    $('#newTaskModal').modal('hide');
+                    location.reload();
+                })
+                .fail(function (data) {
+                    self.errorTitle(data.responseJSON.title);
+                    self.errorBody(data.responseJSON.message);
+                    $('#errorModal').modal('show');
+                });
+        }
+    }
+
+    self.selectedGroup.subscribe(function (data) {
+        if (data != undefined) {
+            self.groupSubjects([])
+            self.ajax(self.baseURI + "/hazizz-server/subjects/group/" + data, 'GET', 'json')
+                .done(function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        self.groupSubjects.push({
+                            id: data[i].id,
+                            name: data[i].name
+                        })
+                    }
+                })
+                .fail(function (data) {
+                    self.errorTitle(data.responseJSON.title);
+                    self.errorBody(data.responseJSON.message);
+                    $('#errorModal').modal('show');
+                });
+        }else{
+            self.groupSubjects([])
+        }
+    })
 };
 
 ko.applyBindings(new Index(), $('#whole')[0]);
