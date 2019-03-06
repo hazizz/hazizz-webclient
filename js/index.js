@@ -10,9 +10,20 @@ function Index() {
     self.myGroups = ko.observableArray("");
     self.myTasks = ko.observableArray("");
 
+    self.selectedGroup = ko.observable("");
+    self.newTaskTitle = ko.observable("");
+    self.taskTypes = ko.observableArray("");
+    self.selectedTaskType = ko.observable("");
+    self.newTaskDescription = ko.observable("");
+    self.newTaskDueDate = ko.observable("");
+    self.groupSubjects = ko.observableArray("");
+    self.selectedSubject = ko.observable("");
+
     self.commentBody = ko.observable("");
     self.comments = ko.observableArray("");
-    self.currentTaskId = 0;
+    self.currentTask = ko.observable("");
+    self.replyIds = [];
+    self.commentIds = [];
     self.headerTask = ko.observable("");
 
     self.newGroupName = ko.observable("");
@@ -107,9 +118,9 @@ function Index() {
                         description: data[i].description,
                         dueDate: data[i].dueDate,
                         creator: data[i].creator.displayName,
-                        subject: data[i].subject.name,
-                        group: data[i].group.name,
-                        groupId: data[i].group.id
+                        subject: data[i].subject ? data[i].subject.name : "",
+                        group: data[i].group ? data[i].group.name : "",
+                        groupId: data[i].group ? data[i].group.id : ""
                     });
                 };
             })
@@ -170,9 +181,9 @@ function Index() {
                         description: data[i].description,
                         dueDate: data[i].dueDate,
                         creator: data[i].creator.displayName,
-                        subject: data[i].subject.name,
-                        group: data[i].group.name,
-                        groupId: data[i].group.id
+                        subject: data[i].subject ? data[i].subject.name : "",
+                        group: data[i].group ? data[i].group.name : "",
+                        groupId: data[i].group ? data[i].group.id : ""
                     });
                 };
             })
@@ -265,17 +276,89 @@ function Index() {
     };
 
     self.getComments = function (task) {
-        self.currentTaskId = task.id;
+        self.currentTask(task);
         self.ajax(self.baseURI + '/hazizz-server/tasks/' + task.id + '/comments')
             .done(function (data) {
                 self.headerTask(task.title)
                 self.comments([])
                 for (var i = 0; i < data.length; i++) {
+                    if (data[i].children) {
+                        for (var j = 0; j < data[i].children.length; j++) {
+                            data[i].children[j] = {
+                                id: data[i].children[j].id,
+                                content: data[i].children[j].content,
+                                date: moment(data[i].children[j].creationDate).format("MMM. DD. - HH:mm"),
+                                dateValue: new Date(data[i].children[j].creationDate),
+                                creatorName: data[i].children[j].creator.displayName,
+                            }
+                            self.replyIds.push(data[i].children[j].id)
+                        }
+                    }
                     self.comments.push({
+                        id: data[i].id,
+                        reply: data[i].children,
                         content: data[i].content,
                         date: moment(data[i].creationDate).format("MMM. DD. - HH:mm"),
-                        creatorName: data[i].creator.displayName
+                        dateValue: new Date(data[i].creationDate),
+                        creatorName: data[i].creator.displayName,
                     });
+                    self.commentIds.push(data[i].id)
+                }
+                self.comments.remove(function (item) {
+                    return self.replyIds.includes(item.id);
+                })
+                self.comments.sort(function (a, b) {
+                    return a.dateValue - b.dateValue;
+                })
+            })
+            .fail(function (data) {
+                self.errorTitle(data.responseJSON.title);
+                self.errorBody(data.responseJSON.message);
+                $('#errorModal').modal('show');
+            });
+    };
+
+    self.sendComment = function () {
+        var data = {"content":self.commentBody()};
+        self.ajax(self.baseURI + '/hazizz-server/tasks/' + self.currentTask.id + '/comments', 'POST', 'text', data)
+            .done(function (data) {
+                self.commentBody("");
+                self.getComments(self.currentTask);
+            })
+            .fail(function (data) {
+                console.log(data)
+                self.errorTitle(data.responseJSON.title);
+                self.errorBody(data.responseJSON.message);
+                $('#errorModal').modal('show');
+            });
+    };
+
+    self.prepareNewTask = function () {
+        self.ajax(self.baseURI + '/hazizz-server/tasks/types', 'GET', 'json')
+            .done(function (data) {
+                self.taskTypes([]);
+                for (var i = 0; i < data.length; i++){
+                    switch (data[i].name) {
+                        case "homework":
+                            data[i].name = "Házi feladat";
+                            break;
+                        case "assigment":
+                            data[i].name = "Beadandó";
+                            break;
+                        case "test":
+                            data[i].name = "Teszt";
+                            break;
+                        case "oral test":
+                            data[i].name = "Felelet";
+                            break;
+                        default:
+                            data[i].name = "Egyéb";
+                            break;
+                    };
+                    self.taskTypes.push({
+                        name: data[i].name,
+                        id: data[i].id
+                    })
                 }
             })
             .fail(function (data) {
@@ -285,21 +368,70 @@ function Index() {
             });
     }
 
-    self.sendComment = function (data) {
-        var data = {"content":self.commentBody()};
-        console.log(self.baseURI + '/tasks/' + self.currentTaskId + '/comments')
-        console.log(data)
-        self.ajax(self.baseURI + '/hazizz-server/tasks/' + self.currentTaskId + '/comments', 'POST', 'text', data)
-            .done(function (data) {
-                self.commentBody("");
-            })
-            .fail(function (data) {
-                console.log(data)
-                self.errorTitle(data.responseJSON.title);
-                self.errorBody(data.responseJSON.message);
-                $('#errorModal').modal('show');
-            });
+    self.createTask = function () {
+        var data = {
+            "taskType":self.selectedTaskType(),
+            "taskTitle":self.newTaskTitle(),
+            "description":self.newTaskDescription(),
+            "dueDate":self.newTaskDueDate()
+        }
+        if (self.selectedSubject()){
+            self.ajax(self.baseURI + "/hazizz-server/tasks/subjects/" + self.selectedSubject(), 'POST', 'text', data)
+                .done(function (data) {
+                    $('#newTaskModal').modal('hide');
+                    location.reload();
+                })
+                .fail(function (data) {
+                    self.errorTitle(data.responseJSON.title);
+                    self.errorBody(data.responseJSON.message);
+                    $('#errorModal').modal('show');
+                });
+        }else if(self.selectedGroup()){
+            self.ajax(self.baseURI + "/hazizz-server/tasks/groups/" + self.selectedGroup(), 'POST', 'text', data)
+                .done(function (data) {
+                    $('#newTaskModal').modal('hide');
+                    location.reload();
+                })
+                .fail(function (data) {
+                    self.errorTitle(data.responseJSON.title);
+                    self.errorBody(data.responseJSON.message);
+                    $('#errorModal').modal('show');
+                });
+        } else{
+            self.ajax(self.baseURI + "/hazizz-server/tasks/me", 'POST', 'text', data)
+                .done(function (data) {
+                    $('#newTaskModal').modal('hide');
+                    location.reload();
+                })
+                .fail(function (data) {
+                    self.errorTitle(data.responseJSON.title);
+                    self.errorBody(data.responseJSON.message);
+                    $('#errorModal').modal('show');
+                });
+        }
     }
+
+    self.selectedGroup.subscribe(function (data) {
+        if (data != undefined) {
+            self.groupSubjects([])
+            self.ajax(self.baseURI + "/hazizz-server/subjects/group/" + data, 'GET', 'json')
+                .done(function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        self.groupSubjects.push({
+                            id: data[i].id,
+                            name: data[i].name
+                        })
+                    }
+                })
+                .fail(function (data) {
+                    self.errorTitle(data.responseJSON.title);
+                    self.errorBody(data.responseJSON.message);
+                    $('#errorModal').modal('show');
+                });
+        }else{
+            self.groupSubjects([])
+        }
+    })
 };
 
 ko.applyBindings(new Index(), $('#whole')[0]);
