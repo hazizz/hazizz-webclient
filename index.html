@@ -255,6 +255,74 @@
 </div>
 <!-- /New Task modal -->
 
+<!-- Create Subject modal -->
+<div class="modal fade" id="newSubjectModal" tabindex="-1" role="dialog" aria-labelledby="newSubjectModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content" id="newSubject">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newSubjectModalTitle">Új téma létrehozása</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <label for="newSubjectName" class="col-3 col-form-label">Téma neve:</label>
+                        <div class="col-9">
+                            <input data-bind="value: newSubjectName" type="text" class="form-control" id="newSubjectName"
+                                   placeholder="Téma neve">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
+                <button data-bind="click: createSubject" type="submit" class="btn hazizz-btn-blue">Létrehozás</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Create Subject modal -->
+
+<!-- Create New Announcement modal -->
+<div class="modal fade" id="newAnnouncementModal" tabindex="-1" role="dialog" aria-labelledby="newAnnouncementModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content" id="newAnnouncement">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newAnnouncementModalTitle">Új feljegyzés létrehozása</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <label for="newAnnouncementTitle" class="col-3 col-form-label">Feljegyzés címe:</label>
+                        <div class="col-9">
+                            <input data-bind="value: newAnnouncementTitle" type="text" class="form-control" id="newAnnouncementTitle"
+                                   placeholder="Feljegyzés címe">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="newAnnouncementText" class="col-3 col-form-label">Feljegyzés szövege:</label>
+                        <div class="col-9">
+                            <textarea data-bind="value: newAnnouncementText" class="form-control" id="newAnnouncementText" rows="3"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
+                <button data-bind="click: createAnnouncement" type="submit" class="btn hazizz-btn-blue">Létrehozás</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Create New Announcement modal -->
+
 <div class="custom-container">
     <div class="row">
         <!-- Group listing -->
@@ -264,7 +332,7 @@
                 <div class="col-4 border-right border-dark">Típus</div>
                 <div class="col-3">Létszám</div>
             </div>
-            <div data-bind="visible: myGroups().lenght <= 0" class="row px-2 text-center">
+            <div data-bind="if: myGroups().lenght <= 0" class="row px-2 text-center">
                 <div class="col-12">
                     Nem vagy tagja egyetlen csoportnak sem.
                 </div>
@@ -299,16 +367,8 @@
 
         <!-- Task listing -->
         <div class="col-sm-6 overflow-auto custom-h-100">
-            <div class="btn-group btn-group-toggle d-none" data-toggle="buttons">
-                <label class="btn hazizz-btn-lightblue active">
-                    <input type="radio" name="options" id="option1" autocomplete="off" checked>Feladatok
-                </label>
-                <label class="btn hazizz-btn-lightblue">
-                    <input type="radio" name="options" id="option2" autocomplete="off">Feljegyzések
-                </label>
-            </div>
-
-            <div data-bind="visible: fromGroup" class="row p-2 hazizz-dbg-blue">
+            <!-- ko if: fromGroup -->
+            <div class="row p-2 hazizz-dbg-blue">
                 <div class="col-auto border-right border-dark text-truncate">Csoport neve: <span
                         data-bind="text: headerGroup().name"></span></div>
                 <div class="col-auto text-truncate">Tagok:
@@ -325,9 +385,31 @@
                     <!-- /ko -->
                 </div>
             </div>
-            <h2 data-bind="visible: myTasks() <= 0" class="description-font-family p-5 text-center text-muted w-100">
+            <div class="text-center">
+
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input data-bind="checked: taskAnno" value="task" type="radio" id="task" name="taskAnnouncement" class="custom-control-input">
+                    <label class="custom-control-label" for="task">Feladatok</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input data-bind="checked: taskAnno" value="announcement" type="radio" id="announcement" name="taskAnnouncement" class="custom-control-input">
+                    <label class="custom-control-label" for="announcement">Feljegyzések</label>
+                </div>
+            </div>
+            <!-- /ko -->
+
+            <!-- ko if: myTasks() <= 0 && taskAnno() == 'task' -->
+            <h2 class="description-font-family p-5 text-center text-muted w-100">
                 Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!
             </h2>
+            <!-- /ko -->
+
+            <!-- ko if: myAnnouncements() <= 0 && taskAnno() == 'announcement' -->
+            <h2 class="description-font-family p-5 text-center text-muted w-100">
+                Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!
+            </h2>
+            <!-- /ko -->
+
             <!-- ko foreach: myTasks -->
             <div data-bind="click: $parent.getComments " class="row p-2 task-highlighter">
                 <div class="col-5">
@@ -361,10 +443,33 @@
             </div>
             <!-- /ko -->
 
+            <!-- ko foreach: myAnnouncements -->
+            <div data-bind="click: $parent.getComments" class="row p-2 task-highlighter">
+                <div class="col-12">
+                        <span>
+                            <h5 data-bind="text: title" class="d-inline font-weight-bold m-0"></h5>
+                            &ndash; <p data-bind="text: creatorName" class="d-inline m-0 lead"></p>
+                        </span>
+                    <div class="row px-4">
+                        <div class="col-12">
+                            <p data-bind="text: text" class="small text-muted m-0"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /ko -->
+
             <div class="w-100 p-1 text-center">
-                <button data-bind="click: prepareNewTask" type="button" class="btn hazizz-btn-blue" data-toggle="modal"
+                <button data-bind="click: prepareNewTask, visible: taskAnno() == 'task'" type="button" class="btn hazizz-btn-blue" data-toggle="modal"
                         data-target="#newTaskModal">
                     Új feladat létrehozása
+                </button>
+                <button data-bind="click: prepareNewTask, visible: taskAnno() == 'announcement'" type="button" class="btn hazizz-btn-blue" data-toggle="modal"
+                        data-target="#newAnnouncementModal">
+                    Új feljegyzés létrehozása
+                </button>
+                <button data-bind="visible: fromGroup" type="button" class="btn hazizz-btn-blue" data-toggle="modal" data-target="#newSubjectModal">
+                    Új téma létrehozása
                 </button>
             </div>
         </div>
@@ -372,8 +477,8 @@
 
         <!-- Comment listing -->
         <div class="col-sm-3 overflow-auto custom-h-100">
-            <div data-bind="visible: comments().length > 0" class="row p-2 hazizz-dbg-blue">
-                <div class="col-12 text-truncate"><span class="font-italic" data-bind="text: headerTask"></span>
+            <div data-bind="visible: currentItem" class="row p-2 hazizz-dbg-blue">
+                <div class="col-12 text-truncate"><span class="font-italic" data-bind="text: headerItem"></span>
                     kommentjei:
                 </div>
             </div>
@@ -419,8 +524,17 @@
             </div>
             <hr class="m-0 mx-2">
             <!-- /ko -->
+            <!-- ko if: currentItem -->
+            <!-- ko if: comments().length == 0 -->
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="lead muted m-0">Nincsenek megjelenítendő kommentek.</p>
+                </div>
+            </div>
+            <!-- /ko -->
+            <!-- /ko -->
 
-            <!-- ko if: currentTask -->
+            <!-- ko if: currentItem -->
             <from data-bind="">
                 <div class="form-group">
                     <label for="comment">Kommentelj:</label>
