@@ -18,7 +18,22 @@ function UserLogin() {
             contentType: "application/json",
             cache: false,
             dataType: 'json',
-            data: JSON.stringify(data)
+            data: JSON.stringify(data),
+            error: function (xhr) {
+                console.log(xhr);
+                if (xhr.statusText == "timeout"){
+                    self.ajax(uri, method, type, data);
+                }else{
+                    if (xhr.responseJSON) {
+                        self.errorTitle(xhr.responseJSON.title);
+                        self.errorBody(xhr.responseJSON.message);
+                    }else if (xhr.responseText) {
+                        self.errorTitle(JSON.parse(xhr.responseText).title);
+                        self.errorBody(JSON.parse(xhr.responseText).message);
+                    }
+                    $('#errorModal').modal('show');
+                }
+            }
         };
         return $.ajax(request);
     }
@@ -34,9 +49,6 @@ function UserLogin() {
                 self.rememberMe(false);
                 window.location.href = "index.html";
             })
-            .fail(function (data) {
-                console.log(data.getAllResponseHeaders());
-            });
     }
 
     self.login = function () {
@@ -56,11 +68,6 @@ function UserLogin() {
                     self.rememberMe(false);
                     window.location.href = "index.html";
                 })
-                .fail(function (data) {
-                    self.errorBody(data.responseJSON.message);
-                    self.errorTitle(data.responseJSON.title);
-                    $("#errorModal").modal('show');
-                });
         }
     }
 }
