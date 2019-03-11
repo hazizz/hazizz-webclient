@@ -43,6 +43,8 @@ function Index() {
     self.headerGroup = ko.observable("");
     self.fromGroup = ko.observable(false);
 
+    self.dailyText = ko.observable("");
+
     self.errorTitle = ko.observable();
     self.errorBody = ko.observable();
 
@@ -51,11 +53,26 @@ function Index() {
             url: uri,
             type: method,
             contentType: "application/json",
-            cache: false,
             dataType: type,
             data: JSON.stringify(data),
+            timeout: 3000,
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", "Bearer " + self.token);
+            },
+            error: function (xhr) {
+                console.log(xhr);
+                if (xhr.statusText == "timeout"){
+                    self.ajax(uri, method, type, data);
+                }else{
+                    if (xhr.responseJSON) {
+                        self.errorTitle(xhr.responseJSON.title);
+                        self.errorBody(xhr.responseJSON.message);
+                    }else if (xhr.responseText) {
+                        self.errorTitle(JSON.parse(xhr.responseText).title);
+                        self.errorBody(JSON.parse(xhr.responseText).message);
+                    }
+                    $('#errorModal').modal('show');
+                }
             }
         }
         return $.ajax(request);
@@ -63,8 +80,7 @@ function Index() {
 
     // GET the groups
     var getAllGroups = function () {
-        self.ajax(self.baseURI + '/hazizz-server/me/groups', 'GET', 'json')
-            .done(function (data) {
+        self.ajax(self.baseURI + '/hazizz-server/me/groups', 'GET', 'json').done(function (data) {
                 self.myGroups([]);
                 for (var i = 0; i < data.length; i++) {
                     switch (data[i].groupType) {
@@ -89,17 +105,6 @@ function Index() {
                     });
                 };
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });
     };
     getAllGroups();
     self.getAllGroups = getAllGroups;
@@ -146,20 +151,21 @@ function Index() {
                     return a.dateValue - b.dateValue;
                 })
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });
     };
     getAllTasks();
     self.getAllTasks = getAllTasks;
+
+    if (Cookies.get('daily') == undefined){
+        self.ajax(self.baseURI + '/hazizz-server/information/motd', 'GET', 'json')
+            .done(function (data) {
+                self.dailyText(data);
+                $('#dailyModal').modal('show');
+            })
+    }
+
+    self.dailyClose = function () {
+        Cookies.set('daily', 'true', {expire: 1});
+    }
 
     var setHeaderGroup = function(group){
         self.ajax(self.baseURI + '/hazizz-server/groups/' + group.id + '/details', 'GET', 'json')
@@ -170,17 +176,6 @@ function Index() {
                     users: data.users
                 })
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });
     }
 
     // GET the tasks, on click.
@@ -227,17 +222,6 @@ function Index() {
                     return a.dateValue - b.dateValue;
                 })
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });;
     };
 
     self.announcements = function(groupId){
@@ -254,17 +238,6 @@ function Index() {
                     })
                 }
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });
     }
 
     // CREATE a group.
@@ -281,17 +254,6 @@ function Index() {
                 self.newGroupName("");
                 self.getAllGroups();
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });
     };
 
     //SEARCH a group.
@@ -323,17 +285,6 @@ function Index() {
                     };
                 };
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });;
     };
 
     //JOIN a group.
@@ -341,35 +292,15 @@ function Index() {
         if (group.type == 'Jelszó védett') {
             self.ajax(self.baseURI + '/hazizz-server/me/joingroup/' + group.id + '/' + self.joinGroupPassword(), 'GET', 'text')
                 .done(function () {
+                    self.getAllGroups();
                     $('#joinGroupModal').modal('hide');
                 })
-                .fail(function (data) {
-                    console.log(data);
-                    if (data.responseJSON) {
-                        self.errorTitle(data.responseJSON.title);
-                        self.errorBody(data.responseJSON.message);
-                    }else{
-                        self.errorTitle(JSON.parse(data.responseText).title);
-                        self.errorBody(JSON.parse(data.responseText).message);
-                    }
-                    $('#errorModal').modal('show');
-                });
-        }else {
+       }else {
             self.ajax(self.baseURI + '/hazizz-server/me/joingroup/' + group.id, 'GET', 'text')
                 .done(function () {
+                    self.getAllGroups();
                     $('#joinGroupModal').modal('hide');
                 })
-                .fail(function (data) {
-                    console.log(data);
-                    if (data.responseJSON) {
-                        self.errorTitle(data.responseJSON.title);
-                        self.errorBody(data.responseJSON.message);
-                    }else{
-                        self.errorTitle(JSON.parse(data.responseText).title);
-                        self.errorBody(JSON.parse(data.responseText).message);
-                    }
-                    $('#errorModal').modal('show');
-                });
         }
     };
 
@@ -415,21 +346,11 @@ function Index() {
                     return a.dateValue - b.dateValue;
                 })
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });
     };
 
     self.sendComment = function () {
         var from;
+        self.commentBody("");
         if (self.taskAnno() == 'task'){
             from = 'tasks';
         } else{
@@ -438,20 +359,8 @@ function Index() {
         var data = {"content":self.commentBody()};
         self.ajax(self.baseURI + '/hazizz-server/' + from + '/' + self.currentItem().id + '/comments', 'POST', 'text', data)
             .done(function (data) {
-                self.commentBody("");
                 self.getComments(self.currentItem());
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });
     };
 
     self.prepareNewTask = function () {
@@ -485,17 +394,6 @@ function Index() {
                     })
                 }
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });
     }
 
     self.createTask = function () {
@@ -511,51 +409,18 @@ function Index() {
                     $('#newTaskModal').modal('hide');
                     location.reload();
                 })
-                .fail(function (data) {
-                    console.log(data);
-                    if (data.responseJSON) {
-                        self.errorTitle(data.responseJSON.title);
-                        self.errorBody(data.responseJSON.message);
-                    }else{
-                        self.errorTitle(JSON.parse(data.responseText).title);
-                        self.errorBody(JSON.parse(data.responseText).message);
-                    }
-                    $('#errorModal').modal('show');
-                });
         }else if(self.selectedGroup()){
             self.ajax(self.baseURI + "/hazizz-server/tasks/groups/" + self.selectedGroup(), 'POST', 'text', data)
                 .done(function (data) {
                     $('#newTaskModal').modal('hide');
                     location.reload();
                 })
-                .fail(function (data) {
-                    console.log(data);
-                    if (data.responseJSON) {
-                        self.errorTitle(data.responseJSON.title);
-                        self.errorBody(data.responseJSON.message);
-                    }else{
-                        self.errorTitle(JSON.parse(data.responseText).title);
-                        self.errorBody(JSON.parse(data.responseText).message);
-                    }
-                    $('#errorModal').modal('show');
-                });
         } else{
             self.ajax(self.baseURI + "/hazizz-server/tasks/me", 'POST', 'text', data)
                 .done(function (data) {
                     $('#newTaskModal').modal('hide');
                     location.reload();
                 })
-                .fail(function (data) {
-                    console.log(data);
-                    if (data.responseJSON) {
-                        self.errorTitle(data.responseJSON.title);
-                        self.errorBody(data.responseJSON.message);
-                    }else{
-                        self.errorTitle(JSON.parse(data.responseText).title);
-                        self.errorBody(JSON.parse(data.responseText).message);
-                    }
-                    $('#errorModal').modal('show');
-                });
         }
     }
 
@@ -571,17 +436,6 @@ function Index() {
                         })
                     }
                 })
-                .fail(function (data) {
-                    console.log(data);
-                    if (data.responseJSON) {
-                        self.errorTitle(data.responseJSON.title);
-                        self.errorBody(data.responseJSON.message);
-                    }else{
-                        self.errorTitle(JSON.parse(data.responseText).title);
-                        self.errorBody(JSON.parse(data.responseText).message);
-                    }
-                    $('#errorModal').modal('show');
-                });
         }else{
             self.groupSubjects([])
         }
@@ -593,17 +447,6 @@ function Index() {
             .done(function () {
                 $('#newSubjectModal').modal('hide');
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });
     }
 
     self.taskAnno.subscribe(function (data) {
@@ -623,17 +466,6 @@ function Index() {
                 self.announcements(self.headerGroup().id);
                 $('#newAnnouncementModal').modal('hide');
             })
-            .fail(function (data) {
-                console.log(data);
-                if (data.responseJSON) {
-                    self.errorTitle(data.responseJSON.title);
-                    self.errorBody(data.responseJSON.message);
-                }else{
-                    self.errorTitle(JSON.parse(data.responseText).title);
-                    self.errorBody(JSON.parse(data.responseText).message);
-                }
-                $('#errorModal').modal('show');
-            });
     }
 };
 
