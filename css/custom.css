@@ -14,7 +14,7 @@ YELLOW: #ffcb05
  */
 
 /* Text */
-.small-spaceing{
+.small-spaceing {
     letter-spacing: -0.75px;
 }
 
@@ -23,11 +23,11 @@ YELLOW: #ffcb05
     color: #f23c50;
 }
 
-.task-highlighter:hover{
-    background-color: rgba(0,0,0,0.05);
+.task-highlighter:hover {
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
-.custom-container{
+.custom-container {
     width: 100%;
     padding-right: 15px;
     padding-left: 15px;
@@ -36,94 +36,95 @@ YELLOW: #ffcb05
     max-width: 100%;
 }
 
-.custom-h-100{
+.custom-h-100 {
     height: 100vh;
 }
 
 /* Button colors */
-.hazizz-dbtn-red{
+.hazizz-dbtn-red {
     color: #000;
     background-color: #eb6896;
     border-color: #eb6896;
 }
 
-.hazizz-dbtn-darkred{
+.hazizz-dbtn-darkred {
     color: #000;
     background-color: #c66894;
     border-color: #c66894;
 }
 
-.hazizz-dbtn-bluered{
+.hazizz-dbtn-bluered {
     color: #fff;
     background-color: #836890;
     border-color: #836890;
 }
 
-.hazizz-dbtn-lightblue{
+.hazizz-dbtn-lightblue {
     color: #fff;
     background-color: #46698d;
     border-color: #46698d;
 }
 
-.hazizz-dbtn-blue{
+.hazizz-dbtn-blue {
     color: #fff;
     background-color: #0f6a8b;
     border-color: #0f6a8b;
 }
 
-.hazizz-btn-red{
+.hazizz-btn-red {
     color: #fff;
     background-color: #f23c50;
     border-color: #f23c50;
 }
 
-.hazizz-btn-white{
+.hazizz-btn-white {
     color: #000;
     background-color: #e9f1df;
     border-color: #e9f1df;
 }
 
-.hazizz-btn-lightblue{
+.hazizz-btn-lightblue {
     color: #000;
     background-color: #4ad9d9;
     border-color: #4ad9d9;
 }
-.hazizz-btn-lightblue.active{
+
+.hazizz-btn-lightblue.active {
     color: #000;
-    background-color: rgba(74, 217, 217,  0.3);
-    border-color: rgba(74, 217, 217,  0.3);
+    background-color: rgba(74, 217, 217, 0.3);
+    border-color: rgba(74, 217, 217, 0.3);
 }
 
-.hazizz-btn-blue{
+.hazizz-btn-blue {
     color: #000;
     background-color: #36b1bf;
     border-color: #36b1bf;
 }
 
-.hazizz-btn-yellow{
+.hazizz-btn-yellow {
     color: #000;
     background-color: #ffcb05;
     border-color: #ffcb05;
 }
 
 /* Backgrounds */
-.hazizz-dbg-red{
+.hazizz-dbg-red {
     background-color: #eb6896;
 }
 
-.hazizz-dbg-darkred{
+.hazizz-dbg-darkred {
     background-color: #c66894;
 }
 
-.hazizz-dbg-bluered{
+.hazizz-dbg-bluered {
     background-color: #836890;
 }
 
-.hazizz-dbg-lightblue{
+.hazizz-dbg-lightblue {
     background-color: #46698d;
 }
 
-.hazizz-dbg-blue{
+.hazizz-dbg-blue {
     color: #fff;
     background-color: #0f6a8b;
 }

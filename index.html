@@ -43,7 +43,8 @@
 <!-- /Error modal -->
 
 <!-- Daily message modal -->
-<div class="modal fade" id="dailyModal" tabindex="-1" role="dialog" aria-labelledby="dailyModalTitle" aria-hidden="true">
+<div class="modal fade" id="dailyModal" tabindex="-1" role="dialog" aria-labelledby="dailyModalTitle"
+     aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -56,7 +57,9 @@
                 <p data-bind="text: dailyText" class="text-left text-break"></p>
             </div>
             <div class="modal-footer">
-                <button data-bind="click: dailyClose" type="button" class="btn btn-secondary" data-dismiss="modal">Ne mutassa többet ma</button>
+                <button data-bind="click: dailyClose" type="button" class="btn btn-secondary" data-dismiss="modal">Ne
+                    mutassa többet ma
+                </button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
             </div>
         </div>
@@ -257,13 +260,15 @@
                     <div class="form-group row">
                         <label class="col-4 col-form-label" for="newTaskDescription">Feladat leírás:</label>
                         <div class="col-8">
-                            <textarea data-bind="value: newTaskDescription" class="form-control" id="newTaskDescription" rows="3"></textarea>
+                            <textarea data-bind="value: newTaskDescription" class="form-control" id="newTaskDescription"
+                                      rows="3"></textarea>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-4 col-form-label" for="newTaskDueDate">Feladat elkészítési határideje:</label>
                         <div class="col-8">
-                            <input data-bind="value: newTaskDueDate" type="date" class="form-control" id="newTaskDueDate">
+                            <input data-bind="value: newTaskDueDate" type="date" class="form-control"
+                                   id="newTaskDueDate">
                         </div>
                     </div>
                 </form>
@@ -293,7 +298,8 @@
                     <div class="form-group row">
                         <label for="newSubjectName" class="col-3 col-form-label">Téma neve:</label>
                         <div class="col-9">
-                            <input data-bind="value: newSubjectName" type="text" class="form-control" id="newSubjectName"
+                            <input data-bind="value: newSubjectName" type="text" class="form-control"
+                                   id="newSubjectName"
                                    placeholder="Téma neve">
                         </div>
                     </div>
@@ -309,7 +315,8 @@
 <!-- /Create Subject modal -->
 
 <!-- Create New Announcement modal -->
-<div class="modal fade" id="newAnnouncementModal" tabindex="-1" role="dialog" aria-labelledby="newAnnouncementModalTitle"
+<div class="modal fade" id="newAnnouncementModal" tabindex="-1" role="dialog"
+     aria-labelledby="newAnnouncementModalTitle"
      aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content" id="newAnnouncement">
@@ -324,21 +331,24 @@
                     <div class="form-group row">
                         <label for="newAnnouncementTitle" class="col-3 col-form-label">Feljegyzés címe:</label>
                         <div class="col-9">
-                            <input data-bind="value: newAnnouncementTitle" type="text" class="form-control" id="newAnnouncementTitle"
+                            <input data-bind="value: newAnnouncementTitle" type="text" class="form-control"
+                                   id="newAnnouncementTitle"
                                    placeholder="Feljegyzés címe">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="newAnnouncementText" class="col-3 col-form-label">Feljegyzés szövege:</label>
                         <div class="col-9">
-                            <textarea data-bind="value: newAnnouncementText" class="form-control" id="newAnnouncementText" rows="3"></textarea>
+                            <textarea data-bind="value: newAnnouncementText" class="form-control"
+                                      id="newAnnouncementText" rows="3"></textarea>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
-                <button data-bind="click: createAnnouncement" type="submit" class="btn hazizz-btn-blue">Létrehozás</button>
+                <button data-bind="click: createAnnouncement" type="submit" class="btn hazizz-btn-blue">Létrehozás
+                </button>
             </div>
         </div>
     </div>
@@ -410,11 +420,13 @@
             <div class="text-center">
 
                 <div class="custom-control custom-radio custom-control-inline">
-                    <input data-bind="checked: taskAnno" value="task" type="radio" id="task" name="taskAnnouncement" class="custom-control-input">
+                    <input data-bind="checked: taskAnno" value="task" type="radio" id="task" name="taskAnnouncement"
+                           class="custom-control-input">
                     <label class="custom-control-label" for="task">Feladatok</label>
                 </div>
                 <div class="custom-control custom-radio custom-control-inline">
-                    <input data-bind="checked: taskAnno" value="announcement" type="radio" id="announcement" name="taskAnnouncement" class="custom-control-input">
+                    <input data-bind="checked: taskAnno" value="announcement" type="radio" id="announcement"
+                           name="taskAnnouncement" class="custom-control-input">
                     <label class="custom-control-label" for="announcement">Feljegyzések</label>
                 </div>
             </div>
@@ -482,15 +494,18 @@
             <!-- /ko -->
 
             <div class="w-100 p-1 text-center">
-                <button data-bind="click: prepareNewTask, visible: taskAnno() == 'task'" type="button" class="btn hazizz-btn-blue" data-toggle="modal"
+                <button data-bind="click: prepareNewTask, visible: taskAnno() == 'task'" type="button"
+                        class="btn hazizz-btn-blue" data-toggle="modal"
                         data-target="#newTaskModal">
                     Új feladat létrehozása
                 </button>
-                <button data-bind="click: prepareNewTask, visible: taskAnno() == 'announcement'" type="button" class="btn hazizz-btn-blue" data-toggle="modal"
+                <button data-bind="click: prepareNewTask, visible: taskAnno() == 'announcement'" type="button"
+                        class="btn hazizz-btn-blue" data-toggle="modal"
                         data-target="#newAnnouncementModal">
                     Új feljegyzés létrehozása
                 </button>
-                <button data-bind="visible: fromGroup" type="button" class="btn hazizz-btn-blue" data-toggle="modal" data-target="#newSubjectModal">
+                <button data-bind="visible: fromGroup" type="button" class="btn hazizz-btn-blue" data-toggle="modal"
+                        data-target="#newSubjectModal">
                     Új téma létrehozása
                 </button>
             </div>

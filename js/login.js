@@ -1,7 +1,7 @@
 function UserLogin() {
     var self = this;
     self.username = ko.observable("");
-    if(Cookies.get('username')){
+    if (Cookies.get('username')) {
         self.username = ko.observable(Cookies.get('username'));
     }
     self.password = ko.observable("");
@@ -21,13 +21,13 @@ function UserLogin() {
             data: JSON.stringify(data),
             error: function (xhr) {
                 console.log(xhr);
-                if (xhr.statusText == "timeout"){
+                if (xhr.statusText == "timeout") {
                     self.ajax(uri, method, type, data);
-                }else{
+                } else {
                     if (xhr.responseJSON) {
                         self.errorTitle(xhr.responseJSON.title);
                         self.errorBody(xhr.responseJSON.message);
-                    }else if (xhr.responseText) {
+                    } else if (xhr.responseText) {
                         self.errorTitle(JSON.parse(xhr.responseText).title);
                         self.errorBody(JSON.parse(xhr.responseText).message);
                     }
@@ -38,9 +38,9 @@ function UserLogin() {
         return $.ajax(request);
     }
 
-    if(Cookies.get('refresh') && Cookies.get('username')){
+    if (Cookies.get('refresh') && Cookies.get('username')) {
         self.ajax(self.URI, 'POST', {"username": Cookies.get('username'), "refreshToken": Cookies.get('refresh')})
-            .done(function (data){
+            .done(function (data) {
                 Cookies.set('token', data.token, {expire: 1});
                 Cookies.set('refresh', data.refresh, {expire: 7});
 
@@ -59,7 +59,7 @@ function UserLogin() {
                 .done(function (data) {
                     Cookies.set('token', data.token, {expire: 1});
                     Cookies.set('refresh', data.refresh, {expire: 7});
-                    if(self.rememberMe()){
+                    if (self.rememberMe()) {
                         Cookies.set('username', self.username());
                     }
 
