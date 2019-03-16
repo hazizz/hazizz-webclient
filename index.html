@@ -432,13 +432,7 @@
             </div>
             <!-- /ko -->
 
-            <!-- ko if: myTasks() <= 0 && taskAnno() == 'task' -->
-            <h2 class="description-font-family p-5 text-center text-muted w-100">
-                Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!
-            </h2>
-            <!-- /ko -->
-
-            <!-- ko if: myAnnouncements() <= 0 && taskAnno() == 'announcement' -->
+            <!-- ko if: (myTasks() <= 0 && taskAnno() == 'task') || (myAnnouncements() <= 0 && taskAnno() == 'announcement') -->
             <h2 class="description-font-family p-5 text-center text-muted w-100">
                 Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!
             </h2>
