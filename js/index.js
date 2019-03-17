@@ -8,6 +8,8 @@ function Index() {
 
     self.baseURI = 'https://hazizz.duckdns.org:9000/hazizz-server';
 
+    self.user = ko.observable("");
+
     self.myGroups = ko.observableArray("");
     self.myTasks = ko.observableArray("");
     self.myAnnouncements = ko.observableArray("");
@@ -581,6 +583,18 @@ function Index() {
                 }
             })
     }
+    self.getAllUserData = function(){
+        self.user([]);
+        self.ajax(self.baseURI + "/me/details", 'GET', 'json').done(function (data) {
+            self.user({
+                id: data.id,
+                username: data.username,
+                displayName: data.displayName,
+                email: data.emailAddress,
+                memberTime: moment().diff(moment(data.registrationDate), 'days')
+            })
+        })
+    }
 
     //Creatings
     self.createGroup = function () {
@@ -663,6 +677,9 @@ function Index() {
                 })
         }
     };
+    self.changeUserSettings = function () {
+        $('#changeUserSettingsModal').modal('show');
+    }
 
     //Daily message
     if (Cookies.get('daily') == undefined) {
@@ -678,6 +695,7 @@ function Index() {
 
     self.getAllGroups();
     self.getAllTasks();
+    self.getAllUserData();
 };
 
 ko.applyBindings(new Index(), $('#whole')[0]);

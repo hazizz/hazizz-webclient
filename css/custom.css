@@ -37,7 +37,7 @@ YELLOW: #ffcb05
 }
 
 .custom-h-100 {
-    height: 100vh;
+    max-height: 90vh;
 }
 
 /* Button colors */
