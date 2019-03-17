@@ -8,7 +8,7 @@ function Index() {
 
     self.baseURI = 'https://hazizz.duckdns.org:9000/hazizz-server';
 
-    self.user = ko.observable("");
+    self.user = ko.observable({});
 
     self.myGroups = ko.observableArray("");
     self.myTasks = ko.observableArray("");
@@ -584,15 +584,18 @@ function Index() {
             })
     }
     self.getAllUserData = function(){
-        self.user([]);
         self.ajax(self.baseURI + "/me/details", 'GET', 'json').done(function (data) {
             self.user({
-                id: data.id,
-                username: data.username,
-                displayName: data.displayName,
-                email: data.emailAddress,
-                memberTime: moment().diff(moment(data.registrationDate), 'days')
+                id: ko.observable(data.id),
+                username: ko.observable(data.username),
+                displayName: ko.observable(data.displayName),
+                email: ko.observable(data.emailAddress),
+                memberTime: ko.observable(moment().diff(moment(data.registrationDate), 'days')),
+                profile: ko.observable(),
             })
+        })
+        self.ajax(self.baseURI + "/me/picture/full", 'GET', 'json').done(function (data) {
+            self.user().profile(data.data);
         })
     }
 
