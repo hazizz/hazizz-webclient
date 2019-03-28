@@ -1,5 +1,16 @@
 function Index() {
     var self = this;
+    if (window.location.search.substring(1)) {
+        var URLKeyValue = {};
+        var URLSplitQuestion = window.location.search.substring(1).split('?');
+        for (var i = 0; i < URLSplitQuestion.length; i++){
+            var URLSplitAnd = URLSplitQuestion[i].split('&');
+            for (var j = 0; j < URLSplitAnd.length; j++){
+                var URLSplitEq = URLSplitAnd[j].split('=');
+                URLKeyValue[URLSplitEq[0]] = URLSplitEq[1];
+            }
+        }
+    }
     if (Cookies.get('token')) {
         self.token = Cookies.get('token');
     } else {
@@ -8,7 +19,7 @@ function Index() {
 
     self.baseURI = 'https://hazizz.duckdns.org:9000/hazizz-server';
 
-    self.user = ko.observable({});
+    self.user = ko.observable({profile: ko.observable("")});
 
     self.myGroups = ko.observableArray("");
     self.myTasks = ko.observableArray("");
@@ -93,17 +104,19 @@ function Index() {
             },
             error: function (xhr) {
                 console.log(xhr);
-                if (xhr.statusText == "timeout") {
+                if (xhr.statusText == "timeout" || JSON.parse(xhr.responseText).errorCode == 19) {
                     counter++;
                     if (counter < 4) {
-                        self.ajax(uri, method, type, data);
+                        setTimeout(function () {
+                            self.ajax(uri, method, type, data);
+                        }, 3000)
                     } else {
                         self.errorTitle("Nincs válasz");
                         self.errorBody("A szerver jelenleg nem válaszol. Kérlek póbáld meg később. Amennyiben nem javul meg jelezd nekünk.");
                         $('#errorModal').modal('show');
                         counter = 0;
                     }
-                } else if (xhr.statusText == "abort") {
+                } else if (xhr.statusText != "abort") {
                     switch (xhr.responseJSON ? xhr.responseJSON.errorCode : JSON.parse(xhr.responseText).errorCode) {
                         //Server errors
                         case 1:
@@ -148,7 +161,7 @@ function Index() {
 
                         //Ratelimit
                         case 19:
-                            self.ajax(uri, method, type, data).abort();
+                            self.ajax(uri, method, type, data);
                             break;
 
                         case 2:
@@ -582,7 +595,7 @@ function Index() {
                     })
                 }
             })
-    }
+    };
     self.getAllUserData = function(){
         self.ajax(self.baseURI + "/me/details", 'GET', 'json').done(function (data) {
             self.user({
@@ -591,13 +604,22 @@ function Index() {
                 displayName: ko.observable(data.displayName),
                 email: ko.observable(data.emailAddress),
                 memberTime: ko.observable(moment().diff(moment(data.registrationDate), 'days')),
-                profile: ko.observable(),
+                profile: ko.observable(""),
+            })
+            self.ajax(self.baseURI + "/me/picture/full", 'GET', 'json').done(function (data) {
+                self.user().profile(data.data);
             })
         })
-        self.ajax(self.baseURI + "/me/picture/full", 'GET', 'json').done(function (data) {
-            self.user().profile(data.data);
-        })
+    };
+
+    self.changeProfile = function(data,a){
+        console.log(data);
+        console.log(a);
     }
+
+    self.user().profile.subscribe(function (data) {
+        console.log(data);
+    })
 
     //Creatings
     self.createGroup = function () {
@@ -638,12 +660,12 @@ function Index() {
                     self.getAllTasks();
                 })
         }
-    }
+    };
     self.createSubject = function () {
         var data = {"name": self.newSubjectName()};
         $('#newSubjectModal').modal('hide');
         self.ajax(self.baseURI + '/subjects/group/' + self.headerGroup().id, 'POST', 'text', data);
-    }
+    };
     self.sendComment = function () {
         var from;
         if (self.taskAnno() == 'task') {
@@ -665,7 +687,7 @@ function Index() {
             .done(function () {
                 self.announcements(self.headerGroup().id);
             })
-    }
+    };
     self.joinGroup = function (group) {
         $('#joinGroupModal').modal('hide');
         if (group.type == 'Jelszó védett') {
@@ -680,9 +702,12 @@ function Index() {
                 })
         }
     };
+    if (URLKeyValue && URLKeyValue.group){
+        self.joinGroup({id: URLKeyValue.group});
+    }
     self.changeUserSettings = function () {
         $('#changeUserSettingsModal').modal('show');
-    }
+    };
 
     //Daily message
     if (Cookies.get('daily') == undefined) {

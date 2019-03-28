@@ -314,7 +314,7 @@
 </div>
 <!-- /Create Subject modal -->
 
-<!-- Create New Announcement modal -->
+<!-- Profile settings modal -->
 <div class="modal fade" id="changeUserSettingsModal" tabindex="-1" role="dialog"
      aria-labelledby="changeUserSettingsTitle"
      aria-hidden="true">
@@ -378,7 +378,7 @@
         </div>
     </div>
 </div>
-<!-- /Create New Announcement modal -->
+<!-- /Profile settings modal -->
 
 <!-- New Task modal -->
 <div class="modal fade" id="newTaskModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModalTitle"
@@ -713,6 +713,8 @@
 </div>
 
 <!-- Optional JavaScript -->
+<!-- Dexie -->
+<script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 <!-- Cookies -->
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.0/src/js.cookie.min.js"></script>
 <!-- Font Awesome JS -->
@@ -726,6 +728,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment-with-locales.min.js"></script>
 <script>
     moment.locale('hu');
+    $('#userSettingsProfilePicture').on('change',function(){
+        var fileName = $(this).val();
+        fileName = fileName.split("\\");
+        $(this).next('.custom-file-label').html(fileName[fileName.length-1]);
+    });
 </script>
 <script src="js/index.js"></script>
 </body>
