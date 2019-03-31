@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <title>Hazizz!</title>
+    <title>Hazizz! | Főoldal</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -314,14 +314,14 @@
 </div>
 <!-- /Create Subject modal -->
 
-<!-- Create New Announcement modal -->
-<div class="modal fade" id="newAnnouncementModal" tabindex="-1" role="dialog"
-     aria-labelledby="newAnnouncementModalTitle"
+<!-- Profile settings modal -->
+<div class="modal fade" id="changeUserSettingsModal" tabindex="-1" role="dialog"
+     aria-labelledby="changeUserSettingsTitle"
      aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content" id="newAnnouncement">
+        <div class="modal-content" id="changeUserSettings">
             <div class="modal-header">
-                <h5 class="modal-title" id="newAnnouncementModalTitle">Új feljegyzés létrehozása</h5>
+                <h5 class="modal-title" id="changeUserSettingsTitle">Profilbeállítások</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -329,31 +329,154 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group row">
-                        <label for="newAnnouncementTitle" class="col-3 col-form-label">Feljegyzés címe:</label>
+                        <label for="userSettingsUsername" class="col-3 col-form-label">Felhasználónév:</label>
                         <div class="col-9">
-                            <input data-bind="value: newAnnouncementTitle" type="text" class="form-control"
-                                   id="newAnnouncementTitle"
-                                   placeholder="Feljegyzés címe">
+                            <input data-bind="value: user().username" type="text" readonly class="form-control-plaintext" id="userSettingsUsername">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="newAnnouncementText" class="col-3 col-form-label">Feljegyzés szövege:</label>
+                        <label for="userSettingsDisplayName" class="col-3 col-form-label">Becenév:</label>
                         <div class="col-9">
-                            <textarea data-bind="value: newAnnouncementText" class="form-control"
-                                      id="newAnnouncementText" rows="3"></textarea>
+                            <input data-bind="value: user().displayName" id="userSettingsDisplayName" class="form-control" type="text" placeholder="Becenév">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label for="userSettingsOldPassword" class="col-3 col-form-label">Jelenlegi jelszó:</label>
+                        <div class="col-9">
+                            <input data-bind="value: user().password" id="userSettingsOldPassword" class="form-control" type="password" placeholder="Jelenlegi jelszó">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="userSettingsNewPassword1" class="col-3 col-form-label">Új jelszó:</label>
+                        <div class="col-9">
+                            <input data-bind="value: user().newPassword1" id="userSettingsNewPassword1" class="form-control" type="password" placeholder="Új jelszó">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="userSettingsNewPassword2" class="col-3 col-form-label">Új jelszó mégegyszer:</label>
+                        <div class="col-9">
+                            <input data-bind="value: user().newPassword2" id="userSettingsNewPassword2" class="form-control" type="password" placeholder="Új jelszó">
+                            <div class="invalid-feedback">
+                                A jelszavaknak egyezniük kell, és minimum 8 karakter hosszúnak kell lennie.
+                            </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
-                <button data-bind="click: createAnnouncement" type="submit" class="btn hazizz-btn-blue">Létrehozás
-                </button>
+                <button data-bind="click: updateUserSettings" type="submit" class="btn hazizz-btn-blue">Mentés</button>
             </div>
         </div>
     </div>
 </div>
-<!-- /Create New Announcement modal -->
+<!-- /Profile settings modal -->
+
+<!-- New Task modal -->
+<div class="modal fade" id="newTaskModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content" id="newTask">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newTaskModalTitle">Új feladat létrehozása</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <label for="taskTitle" class="col-4 col-form-label">Feladat címe:</label>
+                        <div class="col-8">
+                            <input data-bind="value: newTaskTitle" type="text" class="form-control" id="taskTitle"
+                                   placeholder="Feladat címe">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="newTaskLocation" class="col-4 col-form-label">Feladata helye:</label>
+                        <div class="col-8">
+                            <select data-bind="options: myGroups,
+                                               optionsText: 'name',
+                                               optionsValue: 'id',
+                                               value: selectedGroup,
+                                               optionsCaption: 'Saját feladat'"
+                                    class="custom-select"
+                                    id="newTaskLocation"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="newTaskSubject" class="col-4 col-form-label">Feladata témája:</label>
+                        <div class="col-8">
+                            <select data-bind="options: groupSubjects,
+                                               optionsText: 'name',
+                                               optionsValue: 'id',
+                                               value: selectedSubject,
+                                               optionsCaption: 'Nincs téma választva'"
+                                    class="custom-select"
+                                    id="newTaskSubject"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="newTaskType" class="col-4 col-form-label">Feladata típusa:</label>
+                        <div class="col-8">
+                            <select data-bind="options: taskTypes,
+                                               optionsText: 'name',
+                                               optionsValue: 'id',
+                                               value: selectedTaskType"
+                                    class="custom-select"
+                                    id="newTaskType"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label" for="newTaskDescription">Feladat leírás:</label>
+                        <div class="col-8">
+                            <textarea data-bind="value: newTaskDescription" class="form-control" id="newTaskDescription"
+                                      rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label" for="newTaskDueDate">Feladat elkészítési határideje:</label>
+                        <div class="col-8">
+                            <input data-bind="value: newTaskDueDate" type="date" class="form-control"
+                                   id="newTaskDueDate">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
+                <button data-bind="click: createTask" type="submit" class="btn hazizz-btn-blue">Létrehozás</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /New Task modal -->
+
+
+<nav class="navbar fixed-bottom navbar-expand-lg hazizz-bg-red navbar-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Navigáció megjelenítése">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Főoldal <span class="sr-only">(jelenlegi)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" href="thera.html">Théra</a>
+            </li>
+        </ul>
+        <div class="btn-group dropup">
+            <button data-bind="text: user().username" type="button" class="btn hazizz-btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a data-bind="click: logout" class="dropdown-item">Kijelentkezés</a>
+                <a data-bind="click: changeUserSettings" class="dropdown-item">Profilbeállítások</a>
+            </div>
+        </div>
+    </div>
+</nav>
 
 <div class="custom-container">
     <div class="row">
@@ -408,7 +531,7 @@
                     <!-- ko if: $index() == 0 -->
                     <span data-bind="text: displayName"></span>
                     <!-- /ko -->
-                    <!-- ko if: $index() > 0 && $index() <= 4 -->
+                    <!-- ko if: $index() > 0 && $index() <= 3 -->
                     | <span data-bind="text: displayName"></span>
                     <!-- /ko -->
                     <!-- ko if: $index() == 5 -->
@@ -431,14 +554,13 @@
                 </div>
             </div>
             <!-- /ko -->
-
-            <!-- ko if: myTasks() <= 0 && taskAnno() == 'task' -->
-            <h2 class="description-font-family p-5 text-center text-muted w-100">
-                Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!
-            </h2>
+            <!-- ko ifnot: fromGroup -->
+            <div class="row p-2 hazizz-dbg-blue">
+                <div class="col-auto text-truncate">A jövőben esedékes összes feladatod</div>
+            </div>
             <!-- /ko -->
 
-            <!-- ko if: myAnnouncements() <= 0 && taskAnno() == 'announcement' -->
+            <!-- ko if: (myTasks() <= 0 && taskAnno() == 'task') || (myAnnouncements() <= 0 && taskAnno() == 'announcement') -->
             <h2 class="description-font-family p-5 text-center text-muted w-100">
                 Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!
             </h2>
@@ -533,7 +655,7 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <div data-bind="text: content" class="px-2 text-muted"></div>
+                            <div data-bind="html: content" class="px-2 text-muted"></div>
                         </div>
                     </div>
                     <!-- ko if: reply -->
@@ -550,7 +672,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <div data-bind="text: content" class="px-2 text-muted"></div>
+                                    <div data-bind="html: content" class="px-2 text-muted"></div>
                                 </div>
                             </div>
                         </div>
@@ -572,12 +694,12 @@
             <!-- /ko -->
 
             <!-- ko if: currentItem -->
-            <from data-bind="">
-                <div class="form-group">
+            <from class="form-row pb-5 pb-md-0">
+                <div class="form-group col-8 col-md-12">
                     <label for="comment">Kommentelj:</label>
                     <textarea data-bind="value: commentBody" class="form-control" id="comment" rows="2"></textarea>
                 </div>
-                <div class="form-group text-right">
+                <div class="form-group text-md-right m- auto col-4 col-md-12">
                     <input data-bind="click: sendComment" class="btn hazizz-btn-lightblue" type="button"
                            value="Küldés!">
                 </div>
@@ -589,8 +711,12 @@
 </div>
 
 <!-- Optional JavaScript -->
+<!-- Dexie -->
+<script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 <!-- Cookies -->
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.0/src/js.cookie.min.js"></script>
+<!-- SHA256 -->
+<script src="js/sha256.min.js"></script>
 <!-- Font Awesome JS -->
 <script defer src="https://use.fontawesome.com/releases/v5.6.3/js/all.js"></script>
 <!-- Knockout JS-->
@@ -602,6 +728,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment-with-locales.min.js"></script>
 <script>
     moment.locale('hu');
+    $('#userSettingsProfilePicture').on('change',function(){
+        var fileName = $(this).val();
+        fileName = fileName.split("\\");
+        $(this).next('.custom-file-label').html(fileName[fileName.length-1]);
+    });
 </script>
 <script src="js/index.js"></script>
 </body>

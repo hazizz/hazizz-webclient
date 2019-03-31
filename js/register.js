@@ -1,31 +1,15 @@
-function UserLogin() {
+function UserRegister() {
     var self = this;
 
-    if (window.location.search.substring(1)) {
-        var URLKeyValue = {};
-        var URLSplitQuestion = window.location.search.substring(1).split('?');
-        for (var i = 0; i < URLSplitQuestion.length; i++){
-            var URLSplitAnd = URLSplitQuestion[i].split('&');
-            for (var j = 0; j < URLSplitAnd.length; j++){
-                var URLSplitEq = URLSplitAnd[j].split('=');
-                URLKeyValue[URLSplitEq[0]] = URLSplitEq[1];
-            }
-        }
-        if(URLKeyValue.registration == "success"){
-            $('#regSuc').removeClass("d-none");
-        }
-    }
+    self.registerURI = 'https://hazizz.duckdns.org:9000/hazizz-server/register'
+    self.username = ko.observable('');
+    self.email = ko.observable('');
+    self.password1 = ko.observable('');
+    self.password2 = ko.observable('');
+    self.consent = ko.observable(false);
 
-    self.username = ko.observable("");
-    if (Cookies.get('username')) {
-        self.username = ko.observable(Cookies.get('username'));
-    }
-    self.password = ko.observable("");
-    self.rememberMe = ko.observable(false);
-
-    self.errorTitle = ko.observable("");
-    self.errorBody = ko.observable("");
-    self.URI = 'https://hazizz.duckdns.org:9000/auth-server/auth/accesstoken';
+    self.errorTitle = ko.observable('');
+    self.errorBody = ko.observable('');
 
     self.ajax = function (uri, method, data) {
         var counter = 0;
@@ -33,7 +17,7 @@ function UserLogin() {
             url: uri,
             type: method,
             contentType: "application/json",
-            dataType: 'json',
+            dataType: 'text',
             data: JSON.stringify(data),
             timeout: 3000,
             error: function (xhr) {
@@ -276,38 +260,58 @@ function UserLogin() {
         return $.ajax(request);
     };
 
-    if (Cookies.get('refresh') && Cookies.get('username')) {
-        self.ajax(self.URI, 'POST', {"username": Cookies.get('username'), "refreshToken": Cookies.get('refresh')})
-            .done(function (data) {
-                Cookies.set('token', data.token, {expire: 1});
-                Cookies.set('refresh', data.refresh, {expire: 7});
+    self.register = function () {
+        var valid = true;
+        self.username(self.username().trim().toLowerCase());
+        self.email(self.email().trim());
+        self.password1(self.password1().trim());
+        self.password2(self.password2().trim());
 
-                self.username("");
-                self.password("");
-                self.rememberMe(false);
-                window.location.href = "index.html";
+        if (self.username().length > 3) {
+            $('#felhasznalonev').addClass('is-valid');
+            $('#felhasznalonev').removeClass('is-invalid');
+        }else{
+            valid = false;
+            $('#felhasznalonev').addClass('is-invalid');
+            $('#felhasznalonev').removeClass('is-valid');
+
+        }
+        if (self.email() != '' && /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/.test(self.email())) {
+            $('#email').addClass('is-valid');
+            $('#email').removeClass('is-invalid');
+        }else{
+            valid = false;
+            $('#email').addClass('is-invalid');
+            $('#email').removeClass('is-valid');
+        }
+        if (self.password1() == self.password2() && self.password1().length > 7) {
+            $('#jelszo1').addClass('is-valid');
+            $('#jelszo2').addClass('is-valid');
+            $('#jelszo1').removeClass('is-invalid');
+            $('#jelszo2').removeClass('is-invalid');
+        }else{
+            valid = false;
+            $('#jelszo1').addClass('is-invalid');
+            $('#jelszo2').addClass('is-invalid');
+            $('#jelszo1').removeClass('is-valid');
+            $('#jelsz2').removeClass('is-valid');
+        }
+        if (self.consent()){
+            $('#elfogad').addClass('is-valid');
+            $('#elfogad').removeClass('is-invalid');
+        }else{
+            valid = false;
+            $('#elfogad').addClass('is-invalid');
+            $('#elfogad').removeClass('is-valid');
+        }
+        if (self.username() && self.email() && self.password1() == self.password2() && self.consent() && valid) {
+            var data = {"username":self.username(), "emailAddress":self.email(), "password":sha256(self.password1()), "consent":self.consent()};
+            console.log(data);
+            self.ajax(self.registerURI, 'POST', data).done(function () {
+                window.location = 'login.html?registration=success';
             })
-    }
-
-    self.login = function () {
-        if (self.username() && self.password()) {
-            var data = {"username": self.username(), "password": sha256(self.password())};
-
-            self.ajax(self.URI, 'POST', data)
-                .done(function (data) {
-                    Cookies.set('token', data.token, {expire: 1});
-                    Cookies.set('refresh', data.refresh, {expire: 7});
-                    if (self.rememberMe()) {
-                        Cookies.set('username', self.username());
-                    }
-
-                    self.username("");
-                    self.password("");
-                    self.rememberMe(false);
-                    window.location.href = "index.html";
-                })
         }
     }
 }
 
-ko.applyBindings(new UserLogin(), $('#login')[0]);
+ko.applyBindings(new UserRegister(), $('#register')[0]);
