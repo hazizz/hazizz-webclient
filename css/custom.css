@@ -149,6 +149,11 @@ YELLOW: #ffcb05
     background-color: #ffcb05;
 }
 
+/* Borders */
+.hazizz-border-red{
+    border-color: #f23c50 !important;
+}
+
 /* Signin */
 .signig-logo {
     max-width: 100px;

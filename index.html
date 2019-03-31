@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <title>Hazizz!</title>
+    <title>Hazizz! | Főoldal</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -342,16 +342,6 @@
                     </div>
                     <hr>
                     <div class="form-group row">
-                        <label for="userSettingsProfilePicture" class="col-3 col-form-label">Profilkép feltöltése:</label>
-                        <div class="col-9">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="userSettingsProfilePicture" accept="image/*">
-                                <label class="custom-file-label" for="userSettingsProfilePicture">Válassz képet...</label>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="form-group row">
                         <label for="userSettingsOldPassword" class="col-3 col-form-label">Jelenlegi jelszó:</label>
                         <div class="col-9">
                             <input data-bind="value: user().password" id="userSettingsOldPassword" class="form-control" type="password" placeholder="Jelenlegi jelszó">
@@ -367,13 +357,16 @@
                         <label for="userSettingsNewPassword2" class="col-3 col-form-label">Új jelszó mégegyszer:</label>
                         <div class="col-9">
                             <input data-bind="value: user().newPassword2" id="userSettingsNewPassword2" class="form-control" type="password" placeholder="Új jelszó">
+                            <div class="invalid-feedback">
+                                A jelszavaknak egyezniük kell, és minimum 8 karakter hosszúnak kell lennie.
+                            </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
-                <button data-bind="" type="submit" class="btn hazizz-btn-blue disabled">Mentés</button>
+                <button data-bind="click: updateUserSettings" type="submit" class="btn hazizz-btn-blue">Mentés</button>
             </div>
         </div>
     </div>
@@ -472,7 +465,7 @@
                 <a class="nav-link" href="#">Főoldal <span class="sr-only">(jelenlegi)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled" href="#">Théra</a>
+                <a class="nav-link disabled" href="thera.html">Théra</a>
             </li>
         </ul>
         <div class="btn-group dropup">
@@ -538,7 +531,7 @@
                     <!-- ko if: $index() == 0 -->
                     <span data-bind="text: displayName"></span>
                     <!-- /ko -->
-                    <!-- ko if: $index() > 0 && $index() <= 4 -->
+                    <!-- ko if: $index() > 0 && $index() <= 3 -->
                     | <span data-bind="text: displayName"></span>
                     <!-- /ko -->
                     <!-- ko if: $index() == 5 -->
@@ -559,6 +552,11 @@
                            name="taskAnnouncement" class="custom-control-input">
                     <label class="custom-control-label" for="announcement">Feljegyzések</label>
                 </div>
+            </div>
+            <!-- /ko -->
+            <!-- ko ifnot: fromGroup -->
+            <div class="row p-2 hazizz-dbg-blue">
+                <div class="col-auto text-truncate">A jövőben esedékes összes feladatod</div>
             </div>
             <!-- /ko -->
 
@@ -657,7 +655,7 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <div data-bind="text: content" class="px-2 text-muted"></div>
+                            <div data-bind="html: content" class="px-2 text-muted"></div>
                         </div>
                     </div>
                     <!-- ko if: reply -->
@@ -674,7 +672,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <div data-bind="text: content" class="px-2 text-muted"></div>
+                                    <div data-bind="html: content" class="px-2 text-muted"></div>
                                 </div>
                             </div>
                         </div>
@@ -717,6 +715,8 @@
 <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 <!-- Cookies -->
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.0/src/js.cookie.min.js"></script>
+<!-- SHA256 -->
+<script src="js/sha256.min.js"></script>
 <!-- Font Awesome JS -->
 <script defer src="https://use.fontawesome.com/releases/v5.6.3/js/all.js"></script>
 <!-- Knockout JS-->

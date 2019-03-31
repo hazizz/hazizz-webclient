@@ -17,7 +17,8 @@ function Index() {
         window.location.href = "login.html";
     }
 
-    self.baseURI = 'https://hazizz.duckdns.org:9000/hazizz-server';
+    self.hazizzURI = 'https://hazizz.duckdns.org:9000/hazizz-server';
+    self.authURI = 'https://hazizz.duckdns.org:9000/auth-server';
 
     self.user = ko.observable({profile: ko.observable("")});
 
@@ -32,7 +33,7 @@ function Index() {
     self.selectedGroup.subscribe(function (data) {
         if (data != undefined) {
             self.groupSubjects([])
-            self.ajax(self.baseURI + "/subjects/group/" + data, 'GET', 'json')
+            self.ajax(self.hazizzURI + "/subjects/group/" + data, 'GET', 'json')
                 .done(function (data) {
                     for (var i = 0; i < data.length; i++) {
                         self.groupSubjects.push({
@@ -152,6 +153,7 @@ function Index() {
                             break;
 
                         //Auth errors -> login.html
+                        case 17:
                         case 18:
                         case 21:
                         case 22:
@@ -194,7 +196,6 @@ function Index() {
                             self.errorTitle("Fiókod tiltva van.");
                             self.errorBody("Sajnáljuk, fiókodat tiltotanunk kellett. Amennyiben azt érzed, hogy ez csak egy hiba, kérlek jelezd ezt nekünk.");
                             break;
-                        case 17:
                             self.errorTitle("Nem megfelelő felhasználónév vagy jelszó.");
                             self.errorBody("Kérlek próbálj meg újra bejelentkezni.");
                             break;
@@ -348,7 +349,7 @@ function Index() {
             id: group.id,
             name: group.name
         })
-        self.ajax(self.baseURI + '/groups/' + group.id + '/details', 'GET', 'json')
+        self.ajax(self.hazizzURI + '/groups/' + group.id + '/details', 'GET', 'json')
             .done(function (data) {
                 self.headerGroup({
                     id: data.id,
@@ -360,7 +361,7 @@ function Index() {
 
     //Gettings
     self.getAllGroups = function () {
-        self.ajax(self.baseURI + '/me/groups', 'GET', 'json').done(function (data) {
+        self.ajax(self.hazizzURI + '/me/groups', 'GET', 'json').done(function (data) {
             self.myGroups([]);
             for (var i = 0; i < data.length; i++) {
                 switch (data[i].groupType) {
@@ -388,13 +389,12 @@ function Index() {
         })
     };
     self.getAllTasks = function () {
-        self.ajax(self.baseURI + '/me/tasks', 'GET', 'json')
+        self.ajax(self.hazizzURI + '/me/tasks', 'GET', 'json')
             .done(function (data) {
                 self.myTasks([]);
                 self.myAnnouncements([]);
                 self.headerGroup("");
                 self.fromGroup(false);
-                ;
                 for (var i = 0; i < data.length; i++) {
                     switch (data[i].type.name) {
                         case "homework":
@@ -413,19 +413,20 @@ function Index() {
                             data[i].type.name = "Egyéb";
                             break;
                     }
-                    ;
-                    self.myTasks.push({
-                        id: data[i].id,
-                        type: data[i].type.name,
-                        title: data[i].title,
-                        description: data[i].description,
-                        dueDate: moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true),
-                        dateValue: new Date(data[i].dueDate),
-                        creator: data[i].creator.displayName,
-                        subject: data[i].subject ? data[i].subject.name : "",
-                        group: data[i].group ? data[i].group.name : "",
-                        groupId: data[i].group ? data[i].group.id : ""
-                    });
+                    if (!moment(data[i].dueDate).isBefore(moment())){
+                        self.myTasks.push({
+                            id: data[i].id,
+                            type: data[i].type.name,
+                            title: data[i].title,
+                            description: data[i].description,
+                            dueDate: moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true),
+                            dateValue: new Date(data[i].dueDate),
+                            creator: data[i].creator.displayName,
+                            subject: data[i].subject ? data[i].subject.name : "",
+                            group: data[i].group ? data[i].group.name : "",
+                            groupId: data[i].group ? data[i].group.id : ""
+                        });
+                    }
                 }
                 self.myTasks.sort(function (a, b) {
                     return a.dateValue - b.dateValue;
@@ -442,14 +443,14 @@ function Index() {
         self.currentItem(item);
         self.headerItem(item.title)
         self.comments([])
-        self.ajax(self.baseURI + '/' + from + '/' + item.id + '/comments')
+        self.ajax(self.hazizzURI + '/' + from + '/' + item.id + '/comments')
             .done(function (data) {
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].children) {
                         for (var j = 0; j < data[i].children.length; j++) {
                             data[i].children[j] = {
                                 id: data[i].children[j].id,
-                                content: data[i].children[j].content,
+                                content: data[i].children[j].content.replace(/\n/g, "<br />"),
                                 date: moment(data[i].children[j].creationDate).format("MMM. DD. - HH:mm"),
                                 dateValue: new Date(data[i].children[j].creationDate),
                                 creatorName: data[i].children[j].creator.displayName,
@@ -460,7 +461,7 @@ function Index() {
                     self.comments.push({
                         id: data[i].id,
                         reply: data[i].children,
-                        content: data[i].content,
+                        content: data[i].content.replace(/\n/g, "<br />"),
                         date: moment(data[i].creationDate).format("MMM. DD. - HH:mm"),
                         dateValue: new Date(data[i].creationDate),
                         creatorName: data[i].creator.displayName,
@@ -480,7 +481,7 @@ function Index() {
         self.taskAnno("task");
         self.myAnnouncements([]);
         self.myTasks([]);
-        self.ajax(self.baseURI + '/me/tasks/groups/' + group.id, 'GET', 'json')
+        self.ajax(self.hazizzURI + '/me/tasks/groups/' + group.id, 'GET', 'json')
             .done(function (data) {
                 self.fromGroup(true);
                 for (var i = 0; i < data.length; i++) {
@@ -522,7 +523,7 @@ function Index() {
     self.announcements = function (groupId) {
         self.myAnnouncements([]);
         self.myTasks([]);
-        self.ajax(self.baseURI + '/announcements/groups/' + groupId, 'GET', 'json')
+        self.ajax(self.hazizzURI + '/announcements/groups/' + groupId, 'GET', 'json')
             .done(function (data) {
                 for (var i = 0; i < data.length; i++) {
                     self.myAnnouncements.push({
@@ -535,7 +536,7 @@ function Index() {
             })
     }
     self.searchGroup = function () {
-        self.ajax(self.baseURI + '/groups', 'GET', 'json')
+        self.ajax(self.hazizzURI + '/groups', 'GET', 'json')
             .done(function (data) {
                 for (var i = 0; i < data.length; i++) {
                     switch (data[i].groupType) {
@@ -568,7 +569,7 @@ function Index() {
             self.selectedGroup(self.headerGroup().id)
         }
         self.taskTypes([]);
-        self.ajax(self.baseURI + '/tasks/types', 'GET', 'json')
+        self.ajax(self.hazizzURI + '/tasks/types', 'GET', 'json')
             .done(function (data) {
                 for (var i = 0; i < data.length; i++) {
                     switch (data[i].name) {
@@ -595,9 +596,23 @@ function Index() {
                     })
                 }
             })
+        if (self.selectedGroup() != undefined) {
+            self.groupSubjects([])
+            self.ajax(self.hazizzURI + "/subjects/group/" + self.selectedGroup(), 'GET', 'json')
+                .done(function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        self.groupSubjects.push({
+                            id: data[i].id,
+                            name: data[i].name
+                        })
+                    }
+                })
+        } else {
+            self.groupSubjects([])
+        }
     };
     self.getAllUserData = function(){
-        self.ajax(self.baseURI + "/me/details", 'GET', 'json').done(function (data) {
+        self.ajax(self.hazizzURI + "/me/details", 'GET', 'json').done(function (data) {
             self.user({
                 id: ko.observable(data.id),
                 username: ko.observable(data.username),
@@ -606,20 +621,8 @@ function Index() {
                 memberTime: ko.observable(moment().diff(moment(data.registrationDate), 'days')),
                 profile: ko.observable(""),
             })
-            self.ajax(self.baseURI + "/me/picture/full", 'GET', 'json').done(function (data) {
-                self.user().profile(data.data);
-            })
         })
     };
-
-    self.changeProfile = function(data,a){
-        console.log(data);
-        console.log(a);
-    }
-
-    self.user().profile.subscribe(function (data) {
-        console.log(data);
-    })
 
     //Creatings
     self.createGroup = function () {
@@ -630,7 +633,7 @@ function Index() {
             data = {"groupName": self.newGroupName(), "type": self.newGroupType()};
         }
         $('#newGroupModal').modal('hide');
-        self.ajax(self.baseURI + '/groups', 'POST', 'text', data)
+        self.ajax(self.hazizzURI + '/groups', 'POST', 'text', data)
             .done(function () {
                 self.newGroupName("");
                 self.getAllGroups();
@@ -645,18 +648,30 @@ function Index() {
         }
         $('#newTaskModal').modal('hide');
         if (self.selectedSubject()) {
-            self.ajax(self.baseURI + "/tasks/subjects/" + self.selectedSubject(), 'POST', 'text', data)
+            self.ajax(self.hazizzURI + "/tasks/subjects/" + self.selectedSubject(), 'POST', 'text', data)
                 .done(function (data) {
+                    self.selectedTaskType("");
+                    self.newTaskTitle("");
+                    self.newTaskDescription("");
+                    self.newTaskDueDate("");
                     self.getAllTasks();
                 })
         } else if (self.selectedGroup()) {
-            self.ajax(self.baseURI + "/tasks/groups/" + self.selectedGroup(), 'POST', 'text', data)
+            self.ajax(self.hazizzURI + "/tasks/groups/" + self.selectedGroup(), 'POST', 'text', data)
                 .done(function (data) {
+                    self.selectedTaskType("");
+                    self.newTaskTitle("");
+                    self.newTaskDescription("");
+                    self.newTaskDueDate("");
                     self.getAllTasks();
                 })
         } else {
-            self.ajax(self.baseURI + "/tasks/me", 'POST', 'text', data)
+            self.ajax(self.hazizzURI + "/tasks/me", 'POST', 'text', data)
                 .done(function (data) {
+                    self.selectedTaskType("");
+                    self.newTaskTitle("");
+                    self.newTaskDescription("");
+                    self.newTaskDueDate("");
                     self.getAllTasks();
                 })
         }
@@ -664,7 +679,9 @@ function Index() {
     self.createSubject = function () {
         var data = {"name": self.newSubjectName()};
         $('#newSubjectModal').modal('hide');
-        self.ajax(self.baseURI + '/subjects/group/' + self.headerGroup().id, 'POST', 'text', data);
+        self.ajax(self.hazizzURI + '/subjects/group/' + self.headerGroup().id, 'POST', 'text', data).done(function () {
+            self.newSubjectName("");
+        });
     };
     self.sendComment = function () {
         var from;
@@ -674,7 +691,7 @@ function Index() {
             from = 'announcements';
         }
         var data = {"content": self.commentBody()};
-        self.ajax(self.baseURI + '/' + from + '/' + self.currentItem().id + '/comments', 'POST', 'text', data)
+        self.ajax(self.hazizzURI + '/' + from + '/' + self.currentItem().id + '/comments', 'POST', 'text', data)
             .done(function (data) {
                 self.getComments(self.currentItem());
                 self.commentBody("");
@@ -683,7 +700,7 @@ function Index() {
     self.createAnnouncement = function () {
         var data = {"announcementTitle": self.newAnnouncementTitle(), "description": self.newAnnouncementText()};
         $('#newAnnouncementModal').modal('hide');
-        self.ajax(self.baseURI + '/announcements/groups/' + self.headerGroup().id, 'POST', 'text', data)
+        self.ajax(self.hazizzURI + '/announcements/groups/' + self.headerGroup().id, 'POST', 'text', data)
             .done(function () {
                 self.announcements(self.headerGroup().id);
             })
@@ -691,12 +708,12 @@ function Index() {
     self.joinGroup = function (group) {
         $('#joinGroupModal').modal('hide');
         if (group.type == 'Jelszó védett') {
-            self.ajax(self.baseURI + '/me/joingroup/' + group.id + '/' + self.joinGroupPassword(), 'GET', 'text')
+            self.ajax(self.hazizzURI + '/me/joingroup/' + group.id + '/' + self.joinGroupPassword(), 'GET', 'text')
                 .done(function () {
                     self.getAllGroups();
                 })
         } else {
-            self.ajax(self.baseURI + '/me/joingroup/' + group.id, 'GET', 'text')
+            self.ajax(self.hazizzURI + '/me/joingroup/' + group.id, 'GET', 'text')
                 .done(function () {
                     self.getAllGroups();
                 })
@@ -708,10 +725,34 @@ function Index() {
     self.changeUserSettings = function () {
         $('#changeUserSettingsModal').modal('show');
     };
+    self.updateUserSettings = function () {
+        if (self.user().password != undefined) {
+            var data = {"password":sha256(self.user().password)};
+            self.ajax(self.authURI + '/auth/elevationtoken','POST', 'json', data)
+                .done(function (data) {
+                    self.user().elevation = data.token;
+                })
+                .then(function () {
+                    if (self.user().newPassword1 == self.user().newPassword2 && self.user().newPassword1.trim() != '' && self.user().newPassword1.trim().length > 7){
+                        var data = {"password":sha256(self.user().newPassword1), "token":self.user().elevation};
+                        self.ajax(self.hazizzURI + '/me/password', 'PATCH', 'text', data).done(function () {
+                            $('#changeUserSettingsModal').modal('hide');
+                        })
+                    }else{
+                        $('#userSettingsNewPassword1').addClass('is-invalid');
+                        $('#userSettingsNewPassword2').addClass('is-invalid');
+                    }
+                })
+        }
+        data = {"displayName":self.user().displayName()};
+        self.ajax(self.hazizzURI + '/me/displayname', 'POST', 'text', data).done(function () {
+            $('#changeUserSettingsModal').modal('hide');
+        })
+    }
 
     //Daily message
     if (Cookies.get('daily') == undefined) {
-        self.ajax(self.baseURI + '/information/motd', 'GET', 'json')
+        self.ajax(self.hazizzURI + '/information/motd', 'GET', 'json')
             .done(function (data) {
                 self.dailyText(data);
                 $('#dailyModal').modal('show');
@@ -728,7 +769,6 @@ function Index() {
 
 ko.applyBindings(new Index(), $('#whole')[0]);
 
-/* DEV */
 function logout() {
     Cookies.remove('token');
     Cookies.remove('refresh');
