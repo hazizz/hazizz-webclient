@@ -40,6 +40,13 @@ YELLOW: #ffcb05
     max-height: 90vh;
 }
 
+@media (max-width: 992px) {
+    .custom-h-100{
+        max-height: unset !important;
+    }
+}
+
+
 /* Button colors */
 .hazizz-dbtn-red {
     color: #000;

@@ -84,12 +84,14 @@ function Index() {
     self.joinableGroups = ko.observableArray("");
 
     self.headerGroup = ko.observable("");
-    self.fromGroup = ko.observable(false);
+    self.fromGroup = ko.observable(true);
 
     self.dailyText = ko.observable("");
 
     self.errorTitle = ko.observable("");
     self.errorBody = ko.observable("");
+
+    self.hasActiveRequest = false;
 
     self.ajax = function (uri, method, type, data) {
         var counter = 0;
@@ -770,11 +772,11 @@ function Index() {
     self.getAllUserData();
 
     $(document).ajaxStart(function () {
-        console.log('show');
+        self.hasActiveRequest = true;
         $('#loadingModal').modal('show');
     })
     $(document).ajaxComplete(function () {
-        console.log('hide');
+        self.hasActiveRequest = false;
         setTimeout(function () {
             $('#loadingModal').modal('hide');
         }, 500);
