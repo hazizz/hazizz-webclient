@@ -93,7 +93,6 @@ function Index() {
 
     self.ajax = function (uri, method, type, data) {
         var counter = 0;
-        $('#loadingModal').modal('show');
         var request = {
             url: uri,
             type: method,
@@ -342,9 +341,6 @@ function Index() {
                         $('#errorModal').modal('show');
                     }
                 }
-            },
-            complete: function () {
-                $('#loadingModal').modal('hide');
             }
         }
         return $.ajax(request);
@@ -773,7 +769,16 @@ function Index() {
     self.getAllTasks();
     self.getAllUserData();
 
-
+    $(document).ajaxStart(function () {
+        console.log('show');
+        $('#loadingModal').modal('show');
+    })
+    $(document).ajaxComplete(function () {
+        console.log('hide');
+        setTimeout(function () {
+            $('#loadingModal').modal('hide');
+        }, 500);
+    })
 };
 
 ko.applyBindings(new Index(), $('#whole')[0]);
