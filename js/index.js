@@ -93,6 +93,7 @@ function Index() {
 
     self.ajax = function (uri, method, type, data) {
         var counter = 0;
+        $('#loadingModal').modal('show');
         var request = {
             url: uri,
             type: method,
@@ -328,9 +329,12 @@ function Index() {
                             if (xhr.responseJSON) {
                                 self.errorTitle(xhr.responseJSON.title);
                                 self.errorBody(xhr.responseJSON.message);
-                            } else if (xhr.responseText) {
+                            } else if (JSON.parse(xhr.responseText)) {
                                 self.errorTitle(JSON.parse(xhr.responseText).title);
                                 self.errorBody(JSON.parse(xhr.responseText).message);
+                            } else {
+                                self.errorTitle("Szerverhiba!");
+                                self.errorBody("Szerverünk jelenleg nem válaszol, kérlek próbáld meg újra!")
                             }
                             break;
                     }
@@ -338,6 +342,9 @@ function Index() {
                         $('#errorModal').modal('show');
                     }
                 }
+            },
+            complete: function () {
+                $('#loadingModal').modal('hide');
             }
         }
         return $.ajax(request);
@@ -418,7 +425,7 @@ function Index() {
                             id: data[i].id,
                             type: data[i].type.name,
                             title: data[i].title,
-                            description: data[i].description,
+                            description: data[i].description.replace(/\n/g, "<br />"),
                             dueDate: moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true),
                             dateValue: new Date(data[i].dueDate),
                             creator: data[i].creator.displayName,
@@ -506,7 +513,7 @@ function Index() {
                         id: data[i].id,
                         type: data[i].type.name,
                         title: data[i].title,
-                        description: data[i].description,
+                        description: data[i].description.replace(/\n/g, "<br />"),
                         dueDate: moment(data[i].dueDate, "YYYY-MM-DD").fromNow(true),
                         dateValue: new Date(data[i].dueDate),
                         creator: data[i].creator.displayName,
@@ -765,6 +772,8 @@ function Index() {
     self.getAllGroups();
     self.getAllTasks();
     self.getAllUserData();
+
+
 };
 
 ko.applyBindings(new Index(), $('#whole')[0]);

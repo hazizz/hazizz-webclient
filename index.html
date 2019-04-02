@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <title>Hazizz! | Főoldal</title>
+    <title>Főoldal | Hazizz!</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -373,86 +373,21 @@
 </div>
 <!-- /Profile settings modal -->
 
-<!-- New Task modal -->
-<div class="modal fade" id="newTaskModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModalTitle"
+<!-- Loading modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog"
+     aria-labelledby="loadningModalTitle"
      aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content" id="newTask">
-            <div class="modal-header">
-                <h5 class="modal-title" id="newTaskModalTitle">Új feladat létrehozása</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group row">
-                        <label for="taskTitle" class="col-4 col-form-label">Feladat címe:</label>
-                        <div class="col-8">
-                            <input data-bind="value: newTaskTitle" type="text" class="form-control" id="taskTitle"
-                                   placeholder="Feladat címe">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="newTaskLocation" class="col-4 col-form-label">Feladata helye:</label>
-                        <div class="col-8">
-                            <select data-bind="options: myGroups,
-                                               optionsText: 'name',
-                                               optionsValue: 'id',
-                                               value: selectedGroup,
-                                               optionsCaption: 'Saját feladat'"
-                                    class="custom-select"
-                                    id="newTaskLocation"></select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="newTaskSubject" class="col-4 col-form-label">Feladata témája:</label>
-                        <div class="col-8">
-                            <select data-bind="options: groupSubjects,
-                                               optionsText: 'name',
-                                               optionsValue: 'id',
-                                               value: selectedSubject,
-                                               optionsCaption: 'Nincs téma választva'"
-                                    class="custom-select"
-                                    id="newTaskSubject"></select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="newTaskType" class="col-4 col-form-label">Feladata típusa:</label>
-                        <div class="col-8">
-                            <select data-bind="options: taskTypes,
-                                               optionsText: 'name',
-                                               optionsValue: 'id',
-                                               value: selectedTaskType"
-                                    class="custom-select"
-                                    id="newTaskType"></select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-4 col-form-label" for="newTaskDescription">Feladat leírás:</label>
-                        <div class="col-8">
-                            <textarea data-bind="value: newTaskDescription" class="form-control" id="newTaskDescription"
-                                      rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-4 col-form-label" for="newTaskDueDate">Feladat elkészítési határideje:</label>
-                        <div class="col-8">
-                            <input data-bind="value: newTaskDueDate" type="date" class="form-control"
-                                   id="newTaskDueDate">
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
-                <button data-bind="click: createTask" type="submit" class="btn hazizz-btn-blue">Létrehozás</button>
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content" id="loading">
+            <div class="modal-body text-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<!-- /New Task modal -->
-
+<!-- /Loading modal -->
 
 <nav class="navbar fixed-bottom navbar-expand-lg hazizz-bg-red navbar-dark">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar"
@@ -481,7 +416,7 @@
 <div class="custom-container">
     <div class="row">
         <!-- Group listing -->
-        <div class="col-sm-3 overflow-auto custom-h-100">
+        <div class="col-lg-3 overflow-auto custom-h-100">
             <div class="row p-2 hazizz-dbg-blue text-center">
                 <div class="col-5 border-right border-dark">Név</div>
                 <div class="col-4 border-right border-dark">Típus</div>
@@ -521,7 +456,7 @@
         <!-- /Group listing -->
 
         <!-- Task listing -->
-        <div class="col-sm-6 overflow-auto custom-h-100">
+        <div class="col-lg-6 overflow-auto custom-h-100 border-top border-bottom hazizz-border-red border-lg-0">
             <!-- ko if: fromGroup -->
             <div class="row p-2 hazizz-dbg-blue">
                 <div class="col-auto border-right border-dark text-truncate">Csoport neve: <span
@@ -568,23 +503,22 @@
 
             <!-- ko foreach: myTasks -->
             <div data-bind="click: $parent.getComments " class="row p-2 task-highlighter">
-                <div class="col-5">
+                <div class="col-md-5">
                     <div class="row">
                         <div class="col-12">
                         <span>
                             <h5 data-bind="text: title" class="d-inline font-weight-bold m-0"></h5>
-                            <span data-bind="if: subject">&ndash; <p data-bind="text: subject"
-                                                                     class="d-inline m-0 lead"></p></span>
+                            <span data-bind="if: subject">&ndash; <p data-bind="text: subject" class="d-inline m-0 lead"></p></span>
                         </span>
                         </div>
                     </div>
                     <div class="row px-4">
                         <div class="col-12">
-                            <p data-bind="text: description" class="small text-muted m-0"></p>
+                            <p data-bind="html: description" class="small text-muted m-0"></p>
                         </div>
                     </div>
                 </div>
-                <div class="col-7">
+                <div class="col-md-7">
                     <div class="row justify-content-start">
                         <div class="col-5 text-truncate">Hátra van: <span data-bind="text: dueDate"></span></div>
                         <div class="col-7 text-truncate">Létrehozta: <span data-bind="text: creator"></span></div>
@@ -635,7 +569,7 @@
         <!-- /Task listing -->
 
         <!-- Comment listing -->
-        <div class="col-sm-3 overflow-auto custom-h-100">
+        <div class="col-lg-3 overflow-auto custom-h-100">
             <div data-bind="visible: currentItem" class="row p-2 hazizz-dbg-blue">
                 <div class="col-12 text-truncate"><span class="font-italic" data-bind="text: headerItem"></span>
                     kommentjei:

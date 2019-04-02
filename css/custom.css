@@ -154,6 +154,12 @@ YELLOW: #ffcb05
     border-color: #f23c50 !important;
 }
 
+@media (min-width: 992px) {
+    .border-lg-0{
+        border: 0 !important;
+    }
+}
+
 /* Signin */
 .signig-logo {
     max-width: 100px;
