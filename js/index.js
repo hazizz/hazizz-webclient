@@ -110,7 +110,7 @@ function Index() {
             },
             error: function (xhr) {
                 console.log(xhr);
-                if (xhr.statusText == "timeout" || JSON.parse(xhr.responseText).errorCode == 19) {
+                if (xhr.statusText == "timeout" || JSON.parse(xhr.responseText).errorCode == 19 || xhr.status == 500) {
                     counter++;
                     if (counter < 4) {
                         $('#loadingModal').modal('show');
@@ -781,12 +781,16 @@ function Index() {
             })
     }
     self.dailyClose = function () {
-        Cookies.set('daily', 'true', {expire: 1});
+        Cookies.set('daily', 'true', {expires: 1});
     }
 
     self.getAllGroups();
     self.getAllTasks();
     self.getAllUserData();
+
+    self.theraPopUp = function () {
+        $('#theraModal').modal('show');
+    }
 
     $(document).ajaxStart(function () {
         self.hasActiveRequest = true;
