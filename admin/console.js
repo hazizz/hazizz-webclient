@@ -52,7 +52,6 @@ function GetConsole() {
             for (var i = 0; i < data.length; i++){
                 self.console.push(data[i]);
             }
-            console.log(self.console()[0]);
         })
     }, 7000)
 }
