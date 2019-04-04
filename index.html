@@ -195,7 +195,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
-                <button data-bind="click: searchGroup" type="submit" class="btn hazizz-btn-blue">Keresés</button>
+                <button data-bind="click: searchGroup(joinGroupName)" type="submit" class="btn hazizz-btn-blue">Keresés</button>
             </div>
         </div>
     </div>
@@ -362,6 +362,15 @@
                             </div>
                         </div>
                     </div>
+                    <hr class="bg-danger">
+                    <div class="text-center text-danger font-weight-bold">A beállítást mindeki saját felelősségre használja!</div>
+                    <div class="form-group row">
+                        <label for="serverAddres" class="col-3 col-form-label">Szervercím:</label>
+                        <div class="col-9">
+                            <input data-bind="value: baseURI" id="serverAddres" class="form-control" type="text" placeholder="Saját felelősságre!">
+                        </div>
+                    </div>
+                    <hr class="bg-danger">
                 </form>
             </div>
             <div class="modal-footer">
@@ -376,7 +385,8 @@
 <!-- Loading modal -->
 <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog"
      aria-labelledby="loadningModalTitle"
-     aria-hidden="true">
+     aria-hidden="true"
+     style="z-index: 1052">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content" id="loading">
             <div class="modal-body text-center">
@@ -388,6 +398,27 @@
     </div>
 </div>
 <!-- /Loading modal -->
+
+<!-- Confirm modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog"
+     aria-labelledby="confirmModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content" id="loading">
+            <div class="modal-header">
+                Biztosan?
+            </div>
+            <div class="modal-body">
+                Biztonan csatlakozni szeretnél a(z) <span data-bind="html: confirmGroupName"></span> csoportba?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn hazizz-btn-red" data-dismiss="modal">Nem</button>
+                <button data-bind="click: confirmedJoinGroup" type="submit" class="btn hazizz-btn-blue">Igen</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Confirm modal -->
 
 <nav class="navbar fixed-bottom navbar-expand-lg hazizz-bg-red navbar-dark">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar"

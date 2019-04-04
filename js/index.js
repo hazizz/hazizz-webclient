@@ -8,6 +8,7 @@ function Index() {
             for (var j = 0; j < URLSplitAnd.length; j++){
                 var URLSplitEq = URLSplitAnd[j].split('=');
                 URLKeyValue[URLSplitEq[0]] = URLSplitEq[1];
+                Cookies.set(URLSplitEq[0], URLSplitEq[1]);
             }
         }
     }
@@ -17,8 +18,9 @@ function Index() {
         window.location.href = "login.html";
     }
 
-    self.hazizzURI = 'https://hazizz.duckdns.org:9000/hazizz-server';
-    self.authURI = 'https://hazizz.duckdns.org:9000/auth-server';
+    self.baseURI = ko.observable('https://hazizz.duckdns.org:9000');
+    self.hazizzURI = self.baseURI() + '/hazizz-server';
+    self.authURI = self.baseURI() + '/auth-server';
 
     self.user = ko.observable({profile: ko.observable("")});
 
@@ -93,6 +95,7 @@ function Index() {
 
     self.hasActiveRequest = false;
 
+    self.confirmGroupName = ko.observable("");
     self.ajax = function (uri, method, type, data) {
         var counter = 0;
         var request = {
@@ -110,8 +113,10 @@ function Index() {
                 if (xhr.statusText == "timeout" || JSON.parse(xhr.responseText).errorCode == 19) {
                     counter++;
                     if (counter < 4) {
+                        $('#loadingModal').modal('show');
                         setTimeout(function () {
                             self.ajax(uri, method, type, data);
+                            $('#loadingModal').modal('show');
                         }, 3000)
                     } else {
                         self.errorTitle("Nincs válasz");
@@ -166,6 +171,7 @@ function Index() {
                         //Ratelimit
                         case 19:
                             self.ajax(uri, method, type, data);
+                            $('#loadingModal').modal('show');
                             break;
 
                         case 2:
@@ -540,7 +546,9 @@ function Index() {
                 }
             })
     }
-    self.searchGroup = function () {
+    self.searchGroup = function (groupName) {
+        self.joinableGroups([]);
+        self.confirmGroupName('');
         self.ajax(self.hazizzURI + '/groups', 'GET', 'json')
             .done(function (data) {
                 for (var i = 0; i < data.length; i++) {
@@ -558,13 +566,16 @@ function Index() {
                             data[i].groupType = "Egyéb"
                             break;
                     }
-                    if (self.joinGroupName() == data[i].name) {
+                    if (groupName == data[i].name || groupName == data[i].id) {
                         self.joinableGroups.push({
                             id: data[i].id,
                             name: data[i].name,
                             groupType: data[i].groupType,
                             userCount: data[i].userCount
                         });
+                        if(!isNaN(groupName)){
+                            self.confirmGroupName(data[i].name);
+                        }
                     }
                 };
             })
@@ -724,8 +735,14 @@ function Index() {
                 })
         }
     };
-    if (URLKeyValue && URLKeyValue.group){
-        self.joinGroup({id: URLKeyValue.group});
+    self.confirmedJoinGroup = function (group) {
+        self.joinGroup(group);
+        $('#confirmModal').modal('hide')
+    }
+    if ((URLKeyValue && URLKeyValue.group) || Cookies.get('group')){
+        Cookies.get('group') ? self.searchGroup(Cookies.get('group')) : self.searchGroup(URLKeyValue.group);
+        Cookies.remove('group');
+        $('#confirmModal').modal('show');
     }
     self.changeUserSettings = function () {
         $('#changeUserSettingsModal').modal('show');

@@ -279,8 +279,8 @@ function UserLogin() {
     if (Cookies.get('refresh') && Cookies.get('username')) {
         self.ajax(self.URI, 'POST', {"username": Cookies.get('username'), "refreshToken": Cookies.get('refresh')})
             .done(function (data) {
-                Cookies.set('token', data.token, {expire: 1});
-                Cookies.set('refresh', data.refresh, {expire: 7});
+                Cookies.set('token', data.token, {expires: 1});
+                Cookies.set('refresh', data.refresh, {expires: 7});
 
                 self.username("");
                 self.password("");
@@ -295,8 +295,8 @@ function UserLogin() {
 
             self.ajax(self.URI, 'POST', data)
                 .done(function (data) {
-                    Cookies.set('token', data.token, {expire: 1});
-                    Cookies.set('refresh', data.refresh, {expire: 7});
+                    Cookies.set('token', data.token, {expires: 1});
+                    Cookies.set('refresh', data.refresh, {expires: 7});
                     if (self.rememberMe()) {
                         Cookies.set('username', self.username());
                     }
