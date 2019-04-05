@@ -2,7 +2,7 @@ function GetConsole() {
     var self = this;
     self.authURI = 'https://hazizz.duckdns.org:9000/auth-server/auth/accesstoken';
     self.adminTestURI = 'https://hazizz.duckdns.org:9000/hazizz-server/admin';
-    self.consoleURI = 'https://hazizz.duckdns.org:9000/logger-server/hazizz-server';
+    self.consoleURI = 'https://hazizz.duckdns.org:9000/logger-server/gateway-server';
     self.token = "";
 
     self.console = ko.observableArray([]);
