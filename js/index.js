@@ -1,3 +1,7 @@
+function isFunction(functionToCheck) {
+    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+}
+
 function Index() {
     var self = this;
     if (window.location.search.substring(1)) {
@@ -546,9 +550,15 @@ function Index() {
                 }
             })
     }
-    self.searchGroup = function (groupName) {
+    self.searchGroup = function (groupIdent) {
         self.joinableGroups([]);
         self.confirmGroupName('');
+        var groupName;
+        if (isFunction(groupIdent)){
+            groupName = groupIdent();
+        }else{
+            groupName = groupIdent;
+        }
         self.ajax(self.hazizzURI + '/groups', 'GET', 'json')
             .done(function (data) {
                 for (var i = 0; i < data.length; i++) {
@@ -722,21 +732,28 @@ function Index() {
             })
     };
     self.joinGroup = function (group) {
-        $('#joinGroupModal').modal('hide');
-        if (group.type == 'Jelszó védett') {
-            self.ajax(self.hazizzURI + '/me/joingroup/' + group.id + '/' + self.joinGroupPassword(), 'GET', 'text')
-                .done(function () {
-                    self.getAllGroups();
-                })
-        } else {
+        if (group.conf){
             self.ajax(self.hazizzURI + '/me/joingroup/' + group.id, 'GET', 'text')
                 .done(function () {
                     self.getAllGroups();
                 })
+        } else {
+            $('#joinGroupModal').modal('hide');
+            if (group.type == 'Jelszó védett') {
+                self.ajax(self.hazizzURI + '/me/joingroup/' + group.id + '/' + self.joinGroupPassword(), 'GET', 'text')
+                    .done(function () {
+                        self.getAllGroups();
+                    })
+            } else {
+                self.ajax(self.hazizzURI + '/me/joingroup/' + group.id, 'GET', 'text')
+                    .done(function () {
+                        self.getAllGroups();
+                    })
+            }
         }
     };
-    self.confirmedJoinGroup = function (group) {
-        self.joinGroup(group);
+    self.confirmedJoinGroup = function () {
+        Cookies.get('group') ? console.log("asd") : self.joinGroup({id: URLKeyValue.group, conf: true});
         $('#confirmModal').modal('hide')
     }
     if ((URLKeyValue && URLKeyValue.group) || Cookies.get('group')){
