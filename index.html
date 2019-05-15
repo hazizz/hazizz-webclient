@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <title>Hazizz!</title>
+    <title>Főoldal | Hazizz!</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
@@ -19,7 +19,53 @@
     <!-- Icon -->
     <link rel="icon" href="assets/icon.png" type="image/png">
 </head>
-<body class="hazizz-bg-white">
+<body id="whole" class="hazizz-bg-white">
+<!-- Error modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalTitle" aria-hidden="true"
+     style="z-index: 1051">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 data-bind="text: errorTitle" class="modal-title" id="errorModalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p data-bind="text: errorBody" class="text-left text-break"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="errorModalClose" type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Error modal -->
+
+<!-- Daily message modal -->
+<div class="modal fade" id="dailyModal" tabindex="-1" role="dialog" aria-labelledby="dailyModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dailyModalTitle">Napi üzenet</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p data-bind="text: dailyText" class="text-left text-break"></p>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: dailyClose" type="button" class="btn btn-secondary" data-dismiss="modal">Ne
+                    mutassa többet ma
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Daily message modal -->
 
 <!-- Create group modal -->
 <div class="modal fade" id="newGroupModal" tabindex="-1" role="dialog" aria-labelledby="newGroupModalTitle"
@@ -37,7 +83,7 @@
                     <div class="form-group row">
                         <label for="groupName" class="col-3 col-form-label">Csoport neve:</label>
                         <div class="col-9">
-                            <input data-bind="value: groupName" type="text" class="form-control" id="groupName"
+                            <input data-bind="value: newGroupName" type="text" class="form-control" id="groupName"
                                    placeholder="Csoport neve">
                         </div>
                     </div>
@@ -46,43 +92,44 @@
                             <legend class="col-form-label col-3 pt-0">Csoport típusa:</legend>
                             <div class="col-9">
                                 <div class="form-check form-check-inline">
-                                    <input data-bind="checked: groupType" class="form-check-input" type="radio"
+                                    <input data-bind="checked: newGroupType" class="form-check-input" type="radio"
                                            name="groupType" id="openGroup" value="OPEN">
                                     <label class="form-check-label" for="openGroup">
                                         Nyitott
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input data-bind="checked: groupType" class="form-check-input" type="radio"
+                                    <input data-bind="checked: newGroupType" class="form-check-input" type="radio"
                                            name="groupType" id="passwordGroup" value="PASSWORD">
                                     <label class="form-check-label" for="passwordGroup">
                                         Jelszó védett
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input data-bind="checked: groupType" class="form-check-input" type="radio"
+                                    <input data-bind="checked: newGroupType" class="form-check-input" type="radio"
                                            name="groupType" id="inviteGroup" value="INVITE_ONLY">
                                     <label class="form-check-label" for="inviteGroup">
                                         Meghívásos alapú
                                     </label>
                                 </div>
-                                <div data-bind="visible: groupType() == 'OPEN'" class="small text-muted">Nyitott csoport
+                                <div data-bind="visible: newGroupType() == 'OPEN'" class="small text-muted">Nyitott
+                                    csoport
                                     azt jelenti, hogy bárki csatlakozhat hozzá, elég hozzá a csoport nevét tudnia.
                                 </div>
-                                <div data-bind="visible: groupType() == 'PASSWORD'" class="small text-muted">Jelszó
+                                <div data-bind="visible: newGroupType() == 'PASSWORD'" class="small text-muted">Jelszó
                                     védett csoport azt jelenti, hogy bárki csatlakozhat, aki tudja a csoporthoz tartozó
                                     jelszót.
                                 </div>
-                                <div data-bind="visible: groupType() == 'INVITE_ONLY'" class="small text-muted">A
+                                <div data-bind="visible: newGroupType() == 'INVITE_ONLY'" class="small text-muted">A
                                     meghívásos alapú csoportba csak azok csatlakozhatnak, akik meghívást kapnak hozzá.
                                 </div>
                             </div>
                         </div>
                     </fieldset>
-                    <div data-bind="visible: groupType() == 'PASSWORD'" class="form-group row">
+                    <div data-bind="visible: newGroupType() == 'PASSWORD'" class="form-group row">
                         <label for="groupName" class="col-3 col-form-label">Csoport jelszava:</label>
                         <div class="col-9">
-                            <input data-bind="value: groupPassword" type="password" class="form-control"
+                            <input data-bind="value: newGroupPassword" type="password" class="form-control"
                                    id="groupPassword" placeholder="Csoport jelszó">
                         </div>
                     </div>
@@ -111,7 +158,7 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group row">
-                        <label for="groupName" class="col-3 col-form-label">Csoport neve:</label>
+                        <label for="joinGroupName" class="col-3 col-form-label">Csoport neve:</label>
                         <div class="col-9">
                             <input data-bind="value: joinGroupName" type="text" class="form-control" id="joinGroupName"
                                    placeholder="Csoport neve">
@@ -119,7 +166,7 @@
                     </div>
                 </form>
                 <div data-bind="visible: joinableGroups().length > 0">
-                    <h3 class="description-font-family">Az alábbi csoportokból válassz:</h3>
+                    <h3>Az alábbi csoportokból válassz:</h3>
                     <div class="card-columns">
                         <!-- ko foreach: joinableGroups -->
                         <div class="card">
@@ -129,9 +176,16 @@
                             <div class="card-body text-center">
                                 <p class="card-text">
                                     Csoport típusa: <span data-bind="text: groupType"></span><br>
-                                    Csoport azonosítója: <span data-bind="text: uniqueName"></span><br>
                                     Csoport létszáma: <span data-bind="text: userCount"></span><br>
                                 </p>
+                                <form data-bind="if: groupType == 'Jelszó védett'">
+                                    <div class="form-group">
+                                        <label for="joinGroupPassword" class="col-form-label">Jelszó:</label>
+                                        <input data-bind="value: $parent.joinGroupPassword" type="password"
+                                               class="form-control" id="joinGroupPassword"
+                                               placeholder="Csoport jelszava">
+                                    </div>
+                                </form>
                                 <button data-bind="click: $parent.joinGroup" class="btn btn-primary">Választás</button>
                             </div>
                         </div>
@@ -141,114 +195,535 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
-                <button data-bind="click: searchGroup" type="submit" class="btn hazizz-btn-blue">Keresés</button>
+                <button data-bind="click: searchGroup(joinGroupName)" type="submit" class="btn hazizz-btn-blue">Keresés</button>
             </div>
         </div>
     </div>
 </div>
 <!-- /Join group modal -->
 
-<div class="row" id="groups">
-    <div class="col-sm-3">
-        <div class="row p-2 hazizz-dbg-blue text-center">
-            <div class="col-5 border-right border-dark">Név</div>
-            <div class="col-4 border-right border-dark">Típus</div>
-            <div class="col-3">Létszám</div>
-        </div>
-        <div data-bind="visible: groups().lenght <= 0" class="row px-2 text-center">
-            <div class="col-12">
-                Nem vagy tagja egyetlen csoportnak sem.
+<!-- New Task modal -->
+<div class="modal fade" id="newTaskModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content" id="newTask">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newTaskModalTitle">Új feladat létrehozása</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div>
-        <!-- ko foreach: groups -->
-        <a data-bind="click: $parent.tasks">
-            <div class="row px-2 text-center groups-highlighter">
-                <div class="col-5 text-truncate" data-bind="text: name"></div>
-                <div class="col-4 text-truncate" data-bind="text: groupType"></div>
-                <div class="col-3 text-truncate" data-bind="text: userCount"></div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <label for="taskTitle" class="col-4 col-form-label">Feladat címe:</label>
+                        <div class="col-8">
+                            <input data-bind="value: newTaskTitle" type="text" class="form-control" id="taskTitle"
+                                   placeholder="Feladat címe">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="newTaskLocation" class="col-4 col-form-label">Feladata helye:</label>
+                        <div class="col-8">
+                            <select data-bind="options: myGroups,
+                                               optionsText: 'name',
+                                               optionsValue: 'id',
+                                               value: selectedGroup,
+                                               optionsCaption: 'Saját feladat'"
+                                    class="custom-select"
+                                    id="newTaskLocation"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="newTaskSubject" class="col-4 col-form-label">Feladata témája:</label>
+                        <div class="col-8">
+                            <select data-bind="options: groupSubjects,
+                                               optionsText: 'name',
+                                               optionsValue: 'id',
+                                               value: selectedSubject,
+                                               optionsCaption: 'Nincs téma választva'"
+                                    class="custom-select"
+                                    id="newTaskSubject"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="newTaskType" class="col-4 col-form-label">Feladata típusa:</label>
+                        <div class="col-8">
+                            <select data-bind="options: taskTypes,
+                                               optionsText: 'name',
+                                               optionsValue: 'id',
+                                               value: selectedTaskType"
+                                    class="custom-select"
+                                    id="newTaskType"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label" for="newTaskDescription">Feladat leírás:</label>
+                        <div class="col-8">
+                            <textarea data-bind="value: newTaskDescription" class="form-control" id="newTaskDescription"
+                                      rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label" for="newTaskDueDate">Feladat elkészítési határideje:</label>
+                        <div class="col-8">
+                            <input data-bind="value: newTaskDueDate" type="date" class="form-control"
+                                   id="newTaskDueDate">
+                        </div>
+                    </div>
+                </form>
             </div>
-        </a>
-        <hr class="my-1 mx-3">
-        <!-- /ko -->
-        <a data-bind="click: getAllTasks">
-            <div class="px-2 text-center groups-highlighter">Összes feladat</div>
-        </a>
-        <hr class="my-1 mx-3">
-        <div class="w-100 p-1 text-center">
-            <button type="button" class="btn hazizz-btn-blue" data-toggle="modal" data-target="#newGroupModal">
-                Új csoport létrehozása
-            </button>
-        </div>
-        <div class="w-100 p-1 text-center">
-            <button type="button" class="btn hazizz-btn-lightblue" data-toggle="modal" data-target="#joinGroupModal">
-                Csatlakozás meglévő csoporthoz
-            </button>
+            <div class="modal-footer">
+                <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
+                <button data-bind="click: createTask" type="submit" class="btn hazizz-btn-blue">Létrehozás</button>
+            </div>
         </div>
     </div>
-    <div class="col-sm-6">
-        <div data-bind="visible: fromGroup" class="row p-2 hazizz-dbg-blue">
-            <div class="col border-right border-dark">Csoport neve: <span data-bind="text: headerGroup().name"></span></div>
-            <div class="col border-right border-dark">Csoport megosztható neve: <span data-bind="text: headerGroup().uniqueName"></span></div>
-            <div class="col">Tagok:</div>
-        </div>
-        <h2 data-bind="visible: alltasks() <= 0" class="description-font-family p-5 text-center text-muted w-100">
-            Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!
-        </h2>
-        <!-- ko foreach: alltasks -->
-        <div class="row p-2 task-highlighter">
-            <div class="col-8">
-                <span>
-                    <h5 data-bind="text: title" class="d-inline font-weight-bold m-0"></h5>
-                    <span data-bind="visible: subject">&ndash; <p data-bind="text: subject" class="d-inline m-0 lead"></p></span>
-                </span>
-                <div class="row px-4">
-                    <div class="col-12">
-                        <p data-bind="text: description" class="small text-muted m-0"></p>
+</div>
+<!-- /New Task modal -->
+
+<!-- Create Subject modal -->
+<div class="modal fade" id="newSubjectModal" tabindex="-1" role="dialog" aria-labelledby="newSubjectModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content" id="newSubject">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newSubjectModalTitle">Új téma létrehozása</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <label for="newSubjectName" class="col-3 col-form-label">Téma neve:</label>
+                        <div class="col-9">
+                            <input data-bind="value: newSubjectName" type="text" class="form-control"
+                                   id="newSubjectName"
+                                   placeholder="Téma neve">
+                        </div>
                     </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
+                <button data-bind="click: createSubject" type="submit" class="btn hazizz-btn-blue">Létrehozás</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Create Subject modal -->
+
+<!-- Profile settings modal -->
+<div class="modal fade" id="changeUserSettingsModal" tabindex="-1" role="dialog"
+     aria-labelledby="changeUserSettingsTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content" id="changeUserSettings">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeUserSettingsTitle">Profilbeállítások</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <label for="userSettingsUsername" class="col-3 col-form-label">Felhasználónév:</label>
+                        <div class="col-9">
+                            <input data-bind="value: user().username" type="text" readonly class="form-control-plaintext" id="userSettingsUsername">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="userSettingsDisplayName" class="col-3 col-form-label">Becenév:</label>
+                        <div class="col-9">
+                            <input data-bind="value: user().displayName" id="userSettingsDisplayName" class="form-control" type="text" placeholder="Becenév">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label for="userSettingsOldPassword" class="col-3 col-form-label">Jelenlegi jelszó:</label>
+                        <div class="col-9">
+                            <input data-bind="value: user().password" id="userSettingsOldPassword" class="form-control" type="password" placeholder="Jelenlegi jelszó">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="userSettingsNewPassword1" class="col-3 col-form-label">Új jelszó:</label>
+                        <div class="col-9">
+                            <input data-bind="value: user().newPassword1" id="userSettingsNewPassword1" class="form-control" type="password" placeholder="Új jelszó">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="userSettingsNewPassword2" class="col-3 col-form-label">Új jelszó mégegyszer:</label>
+                        <div class="col-9">
+                            <input data-bind="value: user().newPassword2" id="userSettingsNewPassword2" class="form-control" type="password" placeholder="Új jelszó">
+                            <div class="invalid-feedback">
+                                A jelszavaknak egyezniük kell, és minimum 8 karakter hosszúnak kell lennie.
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="bg-danger">
+                    <div class="text-center text-danger font-weight-bold">A beállítást mindeki saját felelősségre használja!</div>
+                    <div class="form-group row">
+                        <label for="serverAddres" class="col-3 col-form-label">Szervercím:</label>
+                        <div class="col-9">
+                            <input data-bind="value: baseURI" id="serverAddres" class="form-control" type="text" placeholder="Saját felelősságre!">
+                        </div>
+                    </div>
+                    <hr class="bg-danger">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Mégse</button>
+                <button data-bind="click: updateUserSettings" type="submit" class="btn hazizz-btn-blue">Mentés</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Profile settings modal -->
+
+<!-- Loading modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog"
+     aria-labelledby="loadningModalTitle"
+     aria-hidden="true"
+     style="z-index: 1052">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content" id="loading">
+            <div class="modal-body text-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Betöltés...</span>
                 </div>
             </div>
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-7 text-right px-0">
-                        Hátra van:<br>
-                        Létrehozta:<br>
-                        <span data-bind="ifnot: $parent.fromGroup">Csoport:<br></span>
-                        Típus:
+        </div>
+    </div>
+</div>
+<!-- /Loading modal -->
+
+<!-- Confirm modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog"
+     aria-labelledby="confirmModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content" id="loading">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newSubjectModalTitle">Biztosan?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Biztonan csatlakozni szeretnél a(z) <span data-bind="html: confirmGroupName"></span> csoportba?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn hazizz-btn-red" data-dismiss="modal">Nem</button>
+                <button data-bind="click: confirmedJoinGroup" type="submit" class="btn hazizz-btn-blue">Igen</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Confirm modal -->
+
+<!-- Thera modal -->
+<div class="modal fade" id="theraModal" tabindex="-1" role="dialog"
+     aria-labelledby="theraModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" id="loading">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newSubjectModalTitle">Fejlesztés alatt</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezár">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                A Házizz Mindenhol Théra modulja jelenleg kidolgozás alatt van. A publikációja később várható.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn hazizz-btn-lightblue" data-dismiss="modal">Bezár</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Thera modal -->
+
+<nav class="navbar fixed-bottom navbar-expand-lg hazizz-bg-red navbar-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Navigáció megjelenítése">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Főoldal <span class="sr-only">(jelenlegi)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bind="click: theraPopUp" href="index.html">Théra</a>
+            </li>
+        </ul>
+        <div class="btn-group dropup">
+            <button data-bind="text: user().username" type="button" class="btn hazizz-btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a data-bind="click: logout" class="dropdown-item">Kijelentkezés</a>
+                <a data-bind="click: changeUserSettings" class="dropdown-item">Profilbeállítások</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="custom-container">
+    <div class="row">
+        <!-- Group listing -->
+        <div class="col-lg-3 overflow-auto custom-h-100">
+            <div class="row p-2 hazizz-dbg-blue text-center">
+                <div class="col-5 border-right border-dark">Név</div>
+                <div class="col-4 border-right border-dark">Típus</div>
+                <div class="col-3">Létszám</div>
+            </div>
+            <div data-bind="if: myGroups().lenght <= 0" class="row px-2 text-center">
+                <div class="col-12">
+                    Nem vagy tagja egyetlen csoportnak sem.
+                </div>
+            </div>
+            <!-- ko foreach: myGroups -->
+            <a data-bind="click: $parent.tasks">
+                <div class="row px-2 text-center groups-highlighter">
+                    <div class="col-5 text-truncate" data-bind="text: name"></div>
+                    <div class="col-4 text-truncate" data-bind="text: groupType"></div>
+                    <div class="col-3 text-truncate" data-bind="text: userCount"></div>
+                </div>
+            </a>
+            <hr class="my-1 mx-3">
+            <!-- /ko -->
+            <a data-bind="click: getAllTasks">
+                <div class="px-2 text-center groups-highlighter">Összes feladat</div>
+            </a>
+            <hr class="my-1 mx-3">
+            <div class="w-100 p-1 text-center">
+                <button type="button" class="btn hazizz-btn-blue" data-toggle="modal" data-target="#newGroupModal">
+                    Új csoport létrehozása
+                </button>
+            </div>
+            <div class="w-100 p-1 text-center">
+                <button type="button" class="btn hazizz-btn-lightblue" data-toggle="modal"
+                        data-target="#joinGroupModal">
+                    Csatlakozás meglévő csoporthoz
+                </button>
+            </div>
+        </div>
+        <!-- /Group listing -->
+
+        <!-- Task listing -->
+        <div class="col-lg-6 overflow-auto custom-h-100 border-top border-bottom hazizz-border-red border-lg-0">
+            <!-- ko if: fromGroup -->
+            <div class="row p-2 hazizz-dbg-blue">
+                <div class="col-auto border-right border-dark text-truncate">Csoport neve: <span
+                        data-bind="text: headerGroup().name"></span></div>
+                <div class="col-auto text-truncate">Tagok:
+                    <!-- ko foreach: headerGroup().users -->
+                    <!-- ko if: $index() == 0 -->
+                    <span data-bind="text: displayName"></span>
+                    <!-- /ko -->
+                    <!-- ko if: $index() > 0 && $index() <= 3 -->
+                    | <span data-bind="text: displayName"></span>
+                    <!-- /ko -->
+                    <!-- ko if: $index() == 5 -->
+                    és még több
+                    <!-- /ko -->
+                    <!-- /ko -->
+                </div>
+            </div>
+            <div class="text-center">
+
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input data-bind="checked: taskAnno" value="task" type="radio" id="task" name="taskAnnouncement"
+                           class="custom-control-input">
+                    <label class="custom-control-label" for="task">Feladatok</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input data-bind="checked: taskAnno" value="announcement" type="radio" id="announcement"
+                           name="taskAnnouncement" class="custom-control-input">
+                    <label class="custom-control-label" for="announcement">Feljegyzések</label>
+                </div>
+            </div>
+            <!-- /ko -->
+            <!-- ko ifnot: fromGroup -->
+            <div class="row p-2 hazizz-dbg-blue">
+                <div class="col-auto text-truncate">A jövőben esedékes összes feladatod</div>
+            </div>
+            <!-- /ko -->
+
+            <!-- ko if: ((myTasks() <= 0 && taskAnno() == 'task') || (myAnnouncements() <= 0 && taskAnno() == 'announcement')) && false -->
+            <h2 class="description-font-family p-5 text-center text-muted w-100">
+                Válassz egy olyan csoportot az oldalsó listából, amelyben vannak megjeleníthető elemek!
+            </h2>
+            <!-- /ko -->
+
+            <!-- ko foreach: myTasks -->
+            <div data-bind="click: $parent.getComments " class="row p-2 task-highlighter">
+                <div class="col-md-5">
+                    <div class="row">
+                        <div class="col-12">
+                        <span>
+                            <h5 data-bind="text: title" class="d-inline font-weight-bold m-0"></h5>
+                            <span data-bind="if: subject">&ndash; <p data-bind="text: subject" class="d-inline m-0 lead"></p></span>
+                        </span>
+                        </div>
                     </div>
-                    <div class="col-5 text-left px-1">
-                        <span data-bind="text: dueDate"></span><br>
-                        <span data-bind="text: creator"></span><br>
+                    <div class="row px-4">
+                        <div class="col-12">
+                            <p data-bind="html: description" class="small text-muted m-0"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="row justify-content-start">
+                        <div class="col-5 text-truncate">Hátra van: <span data-bind="text: dueDate"></span></div>
+                        <div class="col-7 text-truncate">Létrehozta: <span data-bind="text: creator"></span></div>
+                    </div>
+                    <div class="row justify-content-start">
+                        <div class="col-5 text-truncate">Típus: <span data-bind="text: type"></span></div>
                         <!-- ko ifnot: $parent.fromGroup -->
-                        <span data-bind="text: group"></span>
+                        <div class="col-7 text-truncate">Csoport: <span data-bind="text: group"></span></div>
                         <!-- /ko -->
-                        <span data-bind="text: type"></span>
                     </div>
                 </div>
             </div>
+            <!-- /ko -->
+
+            <!-- ko foreach: myAnnouncements -->
+            <div data-bind="click: $parent.getComments" class="row p-2 task-highlighter">
+                <div class="col-12">
+                        <span>
+                            <h5 data-bind="text: title" class="d-inline font-weight-bold m-0"></h5>
+                            &ndash; <p data-bind="text: creatorName" class="d-inline m-0 lead"></p>
+                        </span>
+                    <div class="row px-4">
+                        <div class="col-12">
+                            <p data-bind="text: text" class="small text-muted m-0"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /ko -->
+
+            <div class="w-100 p-1 text-center">
+                <button data-bind="click: prepareNewTask, visible: taskAnno() == 'task'" type="button"
+                        class="btn hazizz-btn-blue" data-toggle="modal"
+                        data-target="#newTaskModal">
+                    Új feladat létrehozása
+                </button>
+                <button data-bind="click: prepareNewTask, visible: taskAnno() == 'announcement'" type="button"
+                        class="btn hazizz-btn-blue" data-toggle="modal"
+                        data-target="#newAnnouncementModal">
+                    Új feljegyzés létrehozása
+                </button>
+                <button data-bind="visible: fromGroup" type="button" class="btn hazizz-btn-blue" data-toggle="modal"
+                        data-target="#newSubjectModal">
+                    Új téma létrehozása
+                </button>
+            </div>
         </div>
-        <!-- /ko -->
-    </div>
-    <div class="col-sm-3">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur consequuntur cumque, fugiat
-        iusto, nam non obcaecati pariatur perspiciatis quasi ratione rerum, sapiente. Dicta exercitationem expedita
-        mollitia nihil quos, reiciendis velit?
+        <!-- /Task listing -->
+
+        <!-- Comment listing -->
+        <div class="col-lg-3 overflow-auto custom-h-100">
+            <div data-bind="visible: currentItem" class="row p-2 hazizz-dbg-blue">
+                <div class="col-12 text-truncate"><span class="font-italic" data-bind="text: headerItem"></span>
+                    kommentjei:
+                </div>
+            </div>
+
+            <!-- ko foreach: comments -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-3">
+                            <span data-bind="text: creatorName"></span>
+                        </div>
+                        <div class="col-9 text-right">
+                            <span data-bind="text: date"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div data-bind="html: content" class="px-2 text-muted"></div>
+                        </div>
+                    </div>
+                    <!-- ko if: reply -->
+                    <!-- ko foreach: reply -->
+                    <div data-bind="using: reply" class="row ml-2">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-3">
+                                    <span data-bind="text: creatorName"></span>
+                                </div>
+                                <div class="col-9 text-right">
+                                    <span data-bind="text: date"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div data-bind="html: content" class="px-2 text-muted"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                    <!-- /ko -->
+                </div>
+            </div>
+            <hr class="m-0 mx-2">
+            <!-- /ko -->
+            <!-- ko if: currentItem -->
+            <!-- ko if: comments().length == 0 -->
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="lead muted m-0">Nincsenek megjelenítendő kommentek.</p>
+                </div>
+            </div>
+            <!-- /ko -->
+            <!-- /ko -->
+
+            <!-- ko if: currentItem -->
+            <from class="form-row pb-5 pb-md-0">
+                <div class="form-group col-8 col-md-12">
+                    <label for="comment">Kommentelj:</label>
+                    <textarea data-bind="value: commentBody" class="form-control" id="comment" rows="2"></textarea>
+                </div>
+                <div class="form-group text-md-right m- auto col-4 col-md-12">
+                    <input data-bind="click: sendComment" class="btn hazizz-btn-lightblue" type="button"
+                           value="Küldés!">
+                </div>
+            </from>
+            <!-- /ko -->
+        </div>
+        <!-- /Comment listing -->
     </div>
 </div>
 
 <!-- Optional JavaScript -->
+<!-- Dexie -->
+<script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 <!-- Cookies -->
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.0/src/js.cookie.min.js"></script>
+<!-- SHA256 -->
+<script src="js/sha256.min.js"></script>
 <!-- Font Awesome JS -->
 <script defer src="https://use.fontawesome.com/releases/v5.6.3/js/all.js"></script>
 <!-- Knockout JS-->
 <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.4.2.js"></script>
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment-with-locales.min.js"></script>
 <script>
     moment.locale('hu');
+    $('#userSettingsProfilePicture').on('change',function(){
+        var fileName = $(this).val();
+        fileName = fileName.split("\\");
+        $(this).next('.custom-file-label').html(fileName[fileName.length-1]);
+    });
 </script>
 <script src="js/index.js"></script>
 </body>

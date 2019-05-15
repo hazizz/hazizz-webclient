@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hu" class="h-100">
 <head>
-    <title>Bejelentkezés | Hazizz!</title>
+    <title>Regisztráció | Hazizz!</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -19,7 +19,7 @@
     <!-- Icon -->
     <link rel="icon" href="assets/icon.png" type="image/png">
 </head>
-<body id="login" class="hazizz-bg-white d-flex justify-content-center align-item-center h-100 text-center">
+<body id="register" class="hazizz-bg-white d-flex justify-content-center align-item-center h-100 text-center">
 
 <!-- Error modal -->
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalTitle"
@@ -45,25 +45,42 @@
 
 <div class="m-auto">
     <img src="assets/icon.png" class="img-fluid signig-logo mb-3">
-    <div id="regSuc" class="alert alert-success d-none" role="alert">
-        Sikeres regisztráció!
-    </div>
-    <h4>Kérlek itt jelentkezz be!</h4>
-    <form>
+    <form class="needs-validation" novalidate>
         <div class="form-group">
             <input data-bind="value: username" type="text" class="form-control" id="felhasznalonev"
-                   placeholder="Felhasználónév" required autofocus>
+                   placeholder="Felhasználónév"  required autofocus>
+            <div class="invalid-feedback">
+                A felhasználónévnek legalább 4<br>karakter hosszúnak kell lennie!
+            </div>
         </div>
         <div class="form-group">
-            <input data-bind="value: password" type="password" class="form-control" id="jelszo" placeholder="Jelszó"
+            <input data-bind="value: email" type="email" class="form-control" id="email"
+                   placeholder="Email cím" required>
+            <div class="invalid-feedback">
+                Nem helyes email cím!
+            </div>
+        </div>
+        <div class="form-group">
+            <input data-bind="value: password1" type="password" class="form-control" id="jelszo1" placeholder="Jelszó"
                    required>
         </div>
-        <div class="form-group form-check">
-            <input data-bind="checked: rememberMe" type="checkbox" class="form-check-input" id="megjegyez">
-            <label class="form-check-label" for="megjegyez">Maradjak bejelentkezve!</label>
+        <div class="form-group">
+            <input data-bind="value: password2" type="password" class="form-control" id="jelszo2" placeholder="Jelszó ismét"
+                   required>
+            <div class="invalid-feedback">
+                A két beírt jelszónak egyeznie kell,<br>illetve minimum 8 karaktert tartalmaznia.
+            </div>
         </div>
-        <a class="btn hazizz-btn-lightblue" href="register.html">Regisztráció!</a>
-        <button data-bind="click: login" type="submit" class="btn hazizz-btn-blue">Bejelentkezés!</button>
+        <div class="form-group form-check">
+            <input data-bind="checked: consent" type="checkbox" class="form-check-input" id="elfogad" required>
+            <label class="form-check-label" for="elfogad">Elfogadom a Házizz <a href="https://hazizz.github.io/privacy-hu.txt" target="_blank" class="text-decoration-none">Adatvédelmi nyilatkozatát</a>!</label>
+            <div class="invalid-feedback">
+                El kell fogadnod az Adatvédelmi nyilatkozatot a regisztrációhoz!
+            </div>
+        </div>
+        <button type="submit" class="btn hazizz-btn-blue" data-bind="click: register">Regisztráció!</button>
+        <br>
+        <a class="text-decoration-none" href="login.html">Vissza a bejelentkezéshez!</a>
     </form>
 </div>
 
@@ -84,6 +101,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-<script src="js/login.js"></script>
+<script src="js/register.js"></script>
 </body>
 </html>
