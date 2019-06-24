@@ -5,4 +5,17 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #E9F1DF;
+}
+
+.btn-transparent{
+  color: #000;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.btn-hazizz-blue{
+  color: #000;
+  background-color: #4AD9D9;
+  border-color: #4AD9D9;
 }
