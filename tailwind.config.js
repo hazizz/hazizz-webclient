@@ -125,6 +125,24 @@ module.exports = {
         800: '#97266d',
         900: '#702459',
       },
+      hazizz_blue: {
+        100: '#4AD9D9',
+        200: '#36B1BF',
+        500: '#46698D',
+        600: '#0F6A8B',
+      },
+      hazizz_white: {
+        100: '#E9F1DF',
+      },
+      hazizz_yellow: {
+        100: '#FFCB05',
+      },
+      hazizz_red: {
+        100: '#F23C50',
+        500: '#EB6896',
+        600: '#C36894',
+        700: '#836890',
+      },
     },
     spacing: {
       px: '1px',
@@ -282,6 +300,7 @@ module.exports = {
     inset: {
       '0': '0',
       auto: 'auto',
+      '1/2': '50%',
     },
     letterSpacing: {
       tighter: '-0.05em',

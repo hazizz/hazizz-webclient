@@ -2,4 +2,35 @@
 
 @tailwind components;
 
+#root{
+    @apply w-screen h-screen;
+}
+
+.modal{
+    @apply fixed w-full h-full top-0 left-0 flex items-center justify-center;
+    transition: opacity 0.25s ease;
+}
+
+.modal-overlay{
+    @apply absolute w-full h-full bg-gray-900 opacity-50;
+}
+
+.modal-container{
+    @apply bg-white w-11/12 mx-auto rounded shadow-lg z-50 overflow-y-auto;
+}
+
+@screen md {
+    .modal-container{
+        @apply max-w-md;
+    }
+}
+
+.modal-content{
+    @apply py-4 text-left px-6;
+}
+
+.modal-title{
+    @apply flex justify-between items-center pb-3;
+}
+
 @tailwind utilities;
