@@ -3,34 +3,23 @@
 @tailwind components;
 
 #root{
-    @apply w-screen h-screen;
+    @apply w-screen h-screen bg-hazizz_white-100;
 }
 
-.modal{
-    @apply fixed w-full h-full top-0 left-0 flex items-center justify-center;
-    transition: opacity 0.25s ease;
+.logo{
+    @apply w-5/6 m-auto;
 }
 
-.modal-overlay{
-    @apply absolute w-full h-full bg-gray-900 opacity-50;
+.authPage{
+    @apply w-screen h-screen flex items-center justify-center;
 }
 
-.modal-container{
-    @apply bg-white w-11/12 mx-auto rounded shadow-lg z-50 overflow-y-auto;
+.authPage > div{
+    @apply max-w-md;
 }
 
-@screen md {
-    .modal-container{
-        @apply max-w-md;
-    }
-}
-
-.modal-content{
-    @apply py-4 text-left px-6;
-}
-
-.modal-title{
-    @apply flex justify-between items-center pb-3;
+.authPage > div > p{
+    @apply w-full text-center text-3xl font-bold;
 }
 
 @tailwind utilities;
