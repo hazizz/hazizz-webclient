@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# Házizz Mindenhol MASTER
-=======
 # Hazizz webclient
 
 This is webclient for Hazizz, made with React, in TypeScript.
