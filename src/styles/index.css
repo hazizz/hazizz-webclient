@@ -1,0 +1,25 @@
+@tailwind base;
+
+@tailwind components;
+
+#root{
+    @apply w-screen h-screen bg-hazizz_white-100;
+}
+
+.logo{
+    @apply w-5/6 m-auto;
+}
+
+.authPage{
+    @apply w-screen h-screen flex items-center justify-center;
+}
+
+.authPage > div{
+    @apply max-w-md;
+}
+
+.authPage > div > p{
+    @apply w-full text-center text-3xl font-bold;
+}
+
+@tailwind utilities;
