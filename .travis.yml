@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+  - "stable"
+cache:
+  directories:
+    - node_modules
+
+env:
+  - PUBLIC_URL=https://hazizz.github.io/hazizz-webclient
+
+
+script:
+  - npm run build
+
+deploy:
+  provider: pages
+  token: $github_token
+  edge: true
+  local_dir: build
