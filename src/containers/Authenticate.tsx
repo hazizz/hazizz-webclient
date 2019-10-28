@@ -3,29 +3,22 @@ import React from 'react';
 import GoogleLogin from "react-google-login";
 import FacebookLogin, {ReactFacebookLoginInfo} from 'react-facebook-login';
 
-import {authInstance} from "./axios/instaces";
+import {authInstance} from "../axios/instaces";
 
 import {connect} from "react-redux";
-import {saveToken} from "./store/actions";
+import {saveToken} from "../store/actions";
 
 import {useHistory, useLocation} from "react-router-dom";
 
-import logo from './assets/logo.png';
+import logo from '../assets/logo.png';
 
-type tokenSave = {
+import {AuthDetails} from "../types/types";
+
+type Props = {
     saveToken: Function
 }
 
-type authRequestResponseData = {
-    token: string,
-    refresh: string,
-    scopes: null,
-    expires_in: number,
-    refresh_token: string,
-    access_token: string,
-}
-
-function Authenticate(props: tokenSave) {
+const Authenticate = (props: Props) => {
     let history = useHistory();
     let location = useLocation();
 
@@ -42,7 +35,7 @@ function Authenticate(props: tokenSave) {
             }
         })
             .then(resp => {
-                const respData: authRequestResponseData = resp.data;
+                const respData: AuthDetails = resp.data;
                 props.saveToken(respData.token, respData.refresh, respData.expires_in);
                 history.replace(from);
             })
@@ -60,7 +53,7 @@ function Authenticate(props: tokenSave) {
             }
         })
             .then(resp => {
-                const respData: authRequestResponseData = resp.data;
+                const respData: AuthDetails = resp.data;
                 props.saveToken(respData.token, respData.refresh, respData.expires_in);
                 history.replace(from);
             });
@@ -70,7 +63,8 @@ function Authenticate(props: tokenSave) {
         <div className="authPage">
             <div>
                 <img src={logo} alt="Házizz logo" className="logo"/>
-                <p>Jelentkezz be!</p>
+                <h1>Jelentkezz be!</h1>
+                <p>Használd a közösségi bejelentkezések egyikét:</p>
                 <div>
                     <FacebookLogin
                         appId="737993926628989"
@@ -83,13 +77,12 @@ function Authenticate(props: tokenSave) {
                         onSuccess={handleGoogleAuth}
                         onFailure={handleGoogleAuth}
                         scope="openid"
+                        className="google_login_button"
                     />
                 </div>
             </div>
         </div>
     );
-}
+};
 
-const mapStateToProps = null;
-
-export default connect(mapStateToProps, {saveToken})(Authenticate);
+export default connect(null, {saveToken})(Authenticate);

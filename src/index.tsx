@@ -6,7 +6,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import {Provider} from "react-redux";
 import store from "./store/store";
 
-import Authenticate from './Authenticate';
+import Home from "./components/Home";
+import Authenticate from './containers/Authenticate';
 import './tailwind.css';
 
 import * as serviceWorker from './serviceWorker';
@@ -16,7 +17,7 @@ const render =
         <Router>
             <Redirect to="/home"/>
             <Switch>
-                <PrivateRoute path="/home" render={() => <p>Home</p>}/>
+                <PrivateRoute path="/home" Component={Home}/>
                 <Route path="/authenticate" component={Authenticate}/>
             </Switch>
         </Router>
