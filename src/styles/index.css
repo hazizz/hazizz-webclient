@@ -2,24 +2,68 @@
 
 @tailwind components;
 
-#root{
-    @apply w-screen h-screen bg-hazizz_white-100;
+#root {
+    @apply w-full min-h-screen bg-hazizz_white-100 absolute inset-0 overflow-hidden;
+    height: fit-content;
 }
 
-.logo{
+/* === /authenticate === */
+
+.logo {
     @apply w-5/6 m-auto;
 }
 
-.authPage{
+.authPage {
     @apply w-screen h-screen flex items-center justify-center;
 }
 
-.authPage > div{
+.authPage > div {
     @apply max-w-md;
 }
 
-.authPage > div > p{
+.authPage > div > h1 {
     @apply w-full text-center text-3xl font-bold;
+}
+
+.authPage > div > p {
+    @apply w-full text-center text-lg font-bold;
+}
+
+.kep-login-facebook, .google_login_button {
+    @apply w-full block my-2 flex items-center justify-center;
+}
+
+/* === /home === */
+
+.groupSection {
+    @apply w-screen border-solid border-b border-hazizz_red-100 px-2 py-1 inset-0 flex justify-start;
+    height: fit-content;
+}
+
+.groupLabel {
+    @apply mx-2 bg-semi_transparent rounded px-1;
+}
+
+.groupName, .groupUserCount {
+    @apply font-bold;
+}
+
+.taskList{
+    @apply flex flex-wrap;
+}
+
+.taskLabel{
+    @apply border-solid border-hazizz_blue-100 border rounded m-1;
+    flex: 1 1 25%;
+    box-sizing: border-box;
+}
+
+.taskLabel > h1{
+    @apply flex justify-between font-bold text-xl border-dotted border-b border-hazizz_blue-200 py-1;
+}
+
+.taskLabel > .taskDetails{
+    @apply text-gray-700;
 }
 
 @tailwind utilities;

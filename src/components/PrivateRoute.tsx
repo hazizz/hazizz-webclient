@@ -1,16 +1,22 @@
-import React from "react";
+import React, {ReactElement} from "react";
 import {Route, Redirect} from 'react-router-dom'
 import {connect} from "react-redux";
 
 type PrivateRoute = {
     exact?: boolean,
     path: string,
-    Component?: React.ComponentClass,
-    render?: Function,
+    Component?: any,
+    render?: () => null | ReactElement,
     authenticated: boolean
 }
 
-const PrivateRoute = ({exact = false, path, Component, render = () => null, authenticated = false}: PrivateRoute) => {
+const PrivateRoute = ({
+                          exact = false,
+                          path,
+                          Component,
+                          render = () => null,
+                          authenticated = false
+                      }: PrivateRoute) => {
     let route = <Route exact={exact} path={path} component={Component} render={() => render()}/>;
     if (!authenticated)
         route = <Redirect to="/authenticate"/>;
@@ -18,7 +24,7 @@ const PrivateRoute = ({exact = false, path, Component, render = () => null, auth
     return route;
 };
 
-const mapStateToProps = (state: any) =>{
+const mapStateToProps = (state: any) => {
     const {auth} = state;
     return {authenticated: auth.token.length > 0};
 };

@@ -8,7 +8,7 @@ export const authInstance = axios.create({
 
 export const hazizzInstance = axios.create({
     baseURL: 'https://hazizz.duckdns.org:9000/hazizz-server',
-    timeout: 2000,
+    timeout: 3000,
     headers: {"Content-Type": "application/json"},
 });
 

@@ -3,6 +3,14 @@ module.exports = {
   important: false,
   separator: ':',
   theme: {
+    spinner: theme => ({
+      default: {
+        color: '#4ad9d9',
+        size: '1em',
+        border: '2px',
+        speed: '500ms',
+      }
+    }),
     screens: {
       sm: '640px',
       md: '768px',
@@ -12,8 +20,10 @@ module.exports = {
     colors: {
       transparent: 'transparent',
 
-      black: '#000',
-      white: '#fff',
+      black: '#000000',
+      white: '#ffffff',
+
+      semi_transparent: 'rgba(0,0,0,0.2)',
 
       gray: {
         100: '#f7fafc',
@@ -126,21 +136,21 @@ module.exports = {
         900: '#702459',
       },
       hazizz_blue: {
-        100: '#4AD9D9',
-        200: '#36B1BF',
+        100: '#4ad9d9',
+        200: '#36b1bf',
         500: '#46698D',
-        600: '#0F6A8B',
+        600: '#0f6a8b',
       },
       hazizz_white: {
-        100: '#E9F1DF',
+        100: '#e9f1df',
       },
       hazizz_yellow: {
-        100: '#FFCB05',
+        100: '#ffcb05',
       },
       hazizz_red: {
         100: '#F23C50',
-        500: '#EB6896',
-        600: '#C36894',
+        500: '#eb6896',
+        600: '#c36894',
         700: '#836890',
       },
     },
@@ -323,7 +333,7 @@ module.exports = {
       disc: 'disc',
       decimal: 'decimal',
     },
-    margin: (theme, { negative }) => ({
+    margin: (theme, {negative}) => ({
       auto: 'auto',
       ...theme('spacing'),
       ...negative(theme('spacing')),
@@ -492,6 +502,7 @@ module.exports = {
     position: ['responsive'],
     resize: ['responsive'],
     stroke: ['responsive'],
+    spinner: ['responsive'],
     tableLayout: ['responsive'],
     textAlign: ['responsive'],
     textColor: ['responsive', 'hover', 'focus'],
@@ -506,5 +517,7 @@ module.exports = {
     zIndex: ['responsive'],
   },
   corePlugins: {},
-  plugins: [],
-}
+  plugins: [
+    require('tailwindcss-spinner')(),
+  ],
+};
