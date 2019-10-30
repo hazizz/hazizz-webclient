@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import Loader from "./Loader";
-import {hazizzInstance} from "../axios/instaces";
+import Loader from "../Loader";
+import {hazizzInstance} from "../../axios/instaces";
 import {connect} from 'react-redux';
 import moment from "moment";
 
-import {Task} from "../types/types";
+import {Task} from "../../types/types";
 import TaskLabel from "./TaskLabel";
 
 type Props = {

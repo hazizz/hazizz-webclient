@@ -3,34 +3,108 @@
 @tailwind components;
 
 #root {
-    @apply w-full min-h-screen bg-hazizz_white-100 absolute inset-0 overflow-hidden;
     height: fit-content;
 }
 
 /* === /authenticate === */
-
-.logo {
-    @apply w-5/6 m-auto;
+.consentLink {
+    @apply text-hazizz_blue-200;
 }
 
-.authPage {
-    @apply w-screen h-screen flex items-center justify-center;
+.consentLink:visited {
+    @apply text-hazizz_blue-500 no-underline;
 }
 
-.authPage > div {
-    @apply max-w-md;
+.consentLink:hover {
+@appply underline;
 }
 
-.authPage > div > h1 {
-    @apply w-full text-center text-3xl font-bold;
+.consentLink:active {
+    @apply text-hazizz_blue-600;
 }
 
-.authPage > div > p {
-    @apply w-full text-center text-lg font-bold;
+.consentLabel {
+    @apply block pl-6 cursor-pointer text-sm relative;
 }
 
-.kep-login-facebook, .google_login_button {
-    @apply w-full block my-2 flex items-center justify-center;
+@screen md {
+    .consentLabel {
+        @apply text-base;
+    }
+}
+
+@screen lg{
+    .consentLabel{
+        @apply text-2xl pl-10;
+    }
+}
+
+.consentCheckMark {
+    @apply absolute inset-0 h-5 w-5 my-auto bg-hazizz_blue-500 rounded;
+}
+
+@screen lg{
+    .consentCheckMark {
+        @apply h-8 w-8;
+    }
+}
+
+.consentLabel:hover input ~ .consentCheckMark {
+    @apply bg-gray-700;
+}
+
+.consentLabel input:checked ~ .consentCheckMark {
+    @apply bg-hazizz_blue-100;
+}
+
+.consentCheckMark:after {
+    @apply absolute hidden;
+    content: "";
+}
+
+.consentLabel input:checked ~ .consentCheckMark:after {
+    @apply block;
+}
+
+.consentLabel .consentCheckMark:after {
+    @apply border-solid border-white;
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+@screen lg{
+    .consentLabel .consentCheckMark:after{
+        left: 10px;
+        top: 2px;
+        width: 12px;
+        height: 24px;
+    }
+}
+
+.btn{
+    @apply block w-full py-2 px-4 text-white uppercase font-semibold tracking-wide rounded my-3 shadow-lg;
+}
+
+.btn:focus{
+    @apply outline-none shadow-outline;
+}
+
+@screen md{
+    .btn{
+        @apply text-xl py-3 px-6;
+    }
+}
+
+@screen lg{
+    .btn{
+        @apply w-1/2 mx-2 shadow-2xl;
+    }
 }
 
 /* === /home === */
@@ -48,21 +122,21 @@
     @apply font-bold;
 }
 
-.taskList{
+.taskList {
     @apply flex flex-wrap;
 }
 
-.taskLabel{
+.taskLabel {
     @apply border-solid border-hazizz_blue-100 border rounded m-1;
     flex: 1 1 25%;
     box-sizing: border-box;
 }
 
-.taskLabel > h1{
+.taskLabel > h1 {
     @apply flex justify-between font-bold text-xl border-dotted border-b border-hazizz_blue-200 py-1;
 }
 
-.taskLabel > .taskDetails{
+.taskLabel > .taskDetails {
     @apply text-gray-700;
 }
 

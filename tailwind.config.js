@@ -22,6 +22,8 @@ module.exports = {
 
       black: '#000000',
       white: '#ffffff',
+      facebook: '#4267b2',
+      google: '#4285f4',
 
       semi_transparent: 'rgba(0,0,0,0.2)',
 
