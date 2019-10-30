@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "https://hazizz.github.io/hazizz-webclient/precache-manifest.7600693c0e4b1ec1d6012879e9345ca2.js"
+  "https://hazizz.github.io/hazizz-webclient/precache-manifest.d614bcf6c3c8ee8fac35cb2a2dce1c06.js"
 );
 
 self.addEventListener('message', (event) => {

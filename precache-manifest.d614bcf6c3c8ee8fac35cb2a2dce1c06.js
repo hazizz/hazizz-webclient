@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "d723e9c9725185fb06802204004dda8e",
+    "revision": "cb7dbb41fd258b76331b3e49b293ed49",
     "url": "https://hazizz.github.io/hazizz-webclient/index.html"
   },
   {
-    "revision": "e87d35033ba3e129d33e",
-    "url": "https://hazizz.github.io/hazizz-webclient/static/css/main.bcf8ca81.chunk.css"
+    "revision": "942d904c14c5f9fdea0e",
+    "url": "https://hazizz.github.io/hazizz-webclient/static/css/main.3dcb350b.chunk.css"
   },
   {
-    "revision": "cef177770dce40f2c8df",
-    "url": "https://hazizz.github.io/hazizz-webclient/static/js/2.a519ec2c.chunk.js"
+    "revision": "161345485abd3745b125",
+    "url": "https://hazizz.github.io/hazizz-webclient/static/js/2.af261e7b.chunk.js"
   },
   {
-    "revision": "e87d35033ba3e129d33e",
-    "url": "https://hazizz.github.io/hazizz-webclient/static/js/main.4a1870c7.chunk.js"
+    "revision": "942d904c14c5f9fdea0e",
+    "url": "https://hazizz.github.io/hazizz-webclient/static/js/main.7bcf81ca.chunk.js"
   },
   {
     "revision": "ea62aa7b8e9c73a27949",
