@@ -1,6 +1,6 @@
 import React from "react";
-import GroupList from "./GroupList";
-import TaskList from "./TaskList";
+import GroupList from "./Group/GroupList";
+import TaskList from "./Task/TaskList";
 
 const Home = () => {
     return (

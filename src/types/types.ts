@@ -46,3 +46,11 @@ export type Task = {
     completed: boolean,
     permission: string
 };
+
+export type Error = {
+    errorCode: number,
+    message: string,
+    time: string,
+    title: string,
+    url: string
+};

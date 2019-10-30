@@ -28,7 +28,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:styles": "tailwind build src/styles/index.css -o src/tailwind.css",
+    "build:styles": "postcss src/styles/index.css -o src/tailwind.css",
     "watch": "watch \"npm run build:styles\" ./src/styles"
   },
   "eslintConfig": {

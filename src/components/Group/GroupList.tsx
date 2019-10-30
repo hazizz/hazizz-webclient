@@ -1,12 +1,12 @@
 import React, {Component} from "react";
 
-import {hazizzInstance} from "../axios/instaces";
+import {hazizzInstance} from "../../axios/instaces";
 
 import {connect} from "react-redux";
 import GroupLabel from "./GroupLabel";
-import Loader from "./Loader";
+import Loader from "../Loader";
 
-import {Group} from "../types/types";
+import {Group} from "../../types/types";
 
 type Props = {
     isMobile: boolean,
