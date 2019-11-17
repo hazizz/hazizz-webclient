@@ -16,7 +16,7 @@
 }
 
 .consentLink:hover {
-@appply underline;
+    @apply underline;
 }
 
 .consentLink:active {
@@ -29,7 +29,7 @@
 
 @screen md {
     .consentLabel {
-        @apply text-base;
+        @apply text-xl;
     }
 }
 
@@ -40,7 +40,7 @@
 }
 
 .consentCheckMark {
-    @apply absolute inset-0 h-5 w-5 my-auto bg-hazizz_blue-500 rounded;
+    @apply absolute inset-0 h-5 w-5 mt-1 bg-hazizz_blue-500 rounded;
 }
 
 @screen lg{
@@ -88,7 +88,15 @@
 }
 
 .btn{
-    @apply block w-full py-2 px-4 text-white uppercase font-semibold tracking-wide rounded my-3 shadow-lg;
+    @apply block w-full py-2 px-4 font-semibold tracking-wide rounded my-3 shadow-lg;
+}
+
+.btn-login{
+    @apply text-white uppercase;
+}
+
+.btn-green{
+    @apply bg-green-400 uppercase text-gray-900;
 }
 
 .btn:focus{
