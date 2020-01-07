@@ -732,6 +732,11 @@ video {
   text-transform: uppercase;
 }
 
+.btn-google{
+  font-family: Roboto, serif;
+  padding: 0 !important;
+}
+
 .btn-green{
   background-color: #68d391;
   text-transform: uppercase;

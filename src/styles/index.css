@@ -95,6 +95,11 @@
     @apply text-white uppercase;
 }
 
+.btn-google{
+    font-family: Roboto, serif;
+    padding: 0 !important;
+}
+
 .btn-green{
     @apply bg-green-400 uppercase text-gray-900;
 }

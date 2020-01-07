@@ -14,6 +14,7 @@ import logo from '../assets/logo.png';
 import {AuthDetails, Error} from "../types/types";
 
 import {RouteComponentProps} from "react-router-dom";
+import GoogleButton from "../components/Buttons/GoogleButton/GoogleButton";
 
 interface Props extends RouteComponentProps {
     saveToken: (token: string, refresh: string, expires_in: number) => void,
@@ -37,7 +38,7 @@ class Authenticate extends Component<Props> {
         };
 
         const handleGoogleAuth = (resp: any) => {
-            const tokenId:string = resp.tokenId;
+            const tokenId: string = resp.tokenId;
             authInstance({
                 url: "/auth",
                 method: "post",
@@ -109,12 +110,7 @@ class Authenticate extends Component<Props> {
                                 scope="openid"
                                 className="google_login_button"
                                 render={props => (
-                                    <button
-                                        className="btn btn-login bg-google"
-                                        onClick={props.onClick}
-                                    >
-                                        Bejelnetkezés Google használatával
-                                    </button>
+                                    <GoogleButton onClick={props.onClick}/>
                                 )}
                             />
                         </div>
