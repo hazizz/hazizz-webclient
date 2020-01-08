@@ -8,6 +8,7 @@ import store from "./store/store";
 
 import Home from "./components/Home";
 import Authenticate from './containers/Authenticate';
+import Register from './containers/Register';
 import './tailwind.css';
 
 import * as serviceWorker from './serviceWorker';
@@ -18,7 +19,8 @@ const render =
             <Redirect to="/home"/>
             <Switch>
                 <PrivateRoute path="/home" Component={Home}/>
-                <Route path="/authenticate" component={Authenticate}/>
+                <Route exact path="/authenticate" component={Authenticate}/>
+                <Route path="/authenticate/consent" component={Register}/>
             </Switch>
         </Router>
     </Provider>;
