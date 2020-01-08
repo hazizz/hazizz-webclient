@@ -1,6 +1,6 @@
 # Hazizz webclient
 
-This is webclient for Hazizz, made with React, in TypeScript.
+This is webclient for Hazizz, made with React, written in TypeScript.
 
 See [homepage](http://hazizz.github.io) for more information.
 
@@ -13,14 +13,17 @@ Follow instructions on the website, to install it.
 
 ### Installing
 
-Download the code
 ```
 git clone https://github.com/hazizz/hazizz-webclient.git
+cd hazizz-webclient
+npm install
+npm start
 ```
 
-Open a command prompt in the downloaded directory. And run:
+### Environment
+We recommend setting the SSL flag, because facebook social login won't work without it
 ```
-npm start
+HTTPS=true
 ```
 
 ## Used packages
@@ -30,4 +33,3 @@ See [package.json](package.json) for used packages.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
->>>>>>> dev
