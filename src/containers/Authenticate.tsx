@@ -14,7 +14,6 @@ import logo from '../assets/logo.png';
 import {AuthDetails, Error} from "../types/types";
 
 import {RouteComponentProps} from "react-router-dom";
-import GoogleButton from "../components/Buttons/GoogleButton/GoogleButton";
 
 interface Props extends RouteComponentProps {
     saveToken: (token: string, refresh: string, expires_in: number) => void,
@@ -94,12 +93,10 @@ class Authenticate extends Component<Props> {
                                 fields="email"
                                 callback={handleFacebookLogin}
                                 size="small"
-                                render={(props: { onClick: () => React.MouseEvent }) => (
-                                    <button
-                                        className="btn btn-login bg-facebook"
-                                        onClick={props.onClick}
-                                    >
-                                        Bejelentkezés Facebook használatával
+                                render={(props:ReactFacebookLoginInfo) => (
+                                    <button type="button" className="btn btn-login btn-facebook small"
+                                    onClick={props.onClick}>
+                                        Login with Facebook
                                     </button>
                                 )}
                             />
@@ -108,10 +105,7 @@ class Authenticate extends Component<Props> {
                                 onSuccess={handleGoogleAuth}
                                 onFailure={handleGoogleAuth}
                                 scope="openid"
-                                className="google_login_button"
-                                render={props => (
-                                    <GoogleButton onClick={props.onClick}/>
-                                )}
+                                className="btn btn-login btn-google md:text-xl justify-center"
                             />
                         </div>
                     </div>

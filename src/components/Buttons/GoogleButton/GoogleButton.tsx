@@ -1,14 +1,13 @@
 import React from 'react';
-import GoogleLogoImage from "./btn_google_dark_normal_ios.svg";
+import GoogleButtonImage from "./btn_google_signin_dark_normal_web@2x.png";
 
 const GoogleButton = (props: any) => {
     return (
         <button
-            className="btn btn-login btn-google bg-google flex items-center"
+            className="btn btn-login btn-google"
             onClick={props.onClick}
+            style={{backgroundImage: "url(" + GoogleButtonImage + ")"}}
         >
-            <img src={GoogleLogoImage} alt="Google Logo" className="float-left"/>
-            Bejelnetkezés Google használatával
         </button>
     );
 };
