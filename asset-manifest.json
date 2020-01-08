@@ -1,22 +1,23 @@
 {
   "files": {
-    "main.css": "https://hazizz.github.io/hazizz-webclient/static/css/main.3dcb350b.chunk.css",
-    "main.js": "https://hazizz.github.io/hazizz-webclient/static/js/main.7bcf81ca.chunk.js",
-    "main.js.map": "https://hazizz.github.io/hazizz-webclient/static/js/main.7bcf81ca.chunk.js.map",
-    "runtime-main.js": "https://hazizz.github.io/hazizz-webclient/static/js/runtime-main.f6be953f.js",
-    "runtime-main.js.map": "https://hazizz.github.io/hazizz-webclient/static/js/runtime-main.f6be953f.js.map",
-    "static/js/2.af261e7b.chunk.js": "https://hazizz.github.io/hazizz-webclient/static/js/2.af261e7b.chunk.js",
-    "static/js/2.af261e7b.chunk.js.map": "https://hazizz.github.io/hazizz-webclient/static/js/2.af261e7b.chunk.js.map",
+    "main.css": "https://hazizz.github.io/hazizz-webclient/static/css/main.70b5c6d6.chunk.css",
+    "main.js": "https://hazizz.github.io/hazizz-webclient/static/js/main.eaea0ac9.chunk.js",
+    "main.js.map": "https://hazizz.github.io/hazizz-webclient/static/js/main.eaea0ac9.chunk.js.map",
+    "runtime-main.js": "https://hazizz.github.io/hazizz-webclient/static/js/runtime-main.38182fd3.js",
+    "runtime-main.js.map": "https://hazizz.github.io/hazizz-webclient/static/js/runtime-main.38182fd3.js.map",
+    "static/js/2.73785422.chunk.js": "https://hazizz.github.io/hazizz-webclient/static/js/2.73785422.chunk.js",
+    "static/js/2.73785422.chunk.js.map": "https://hazizz.github.io/hazizz-webclient/static/js/2.73785422.chunk.js.map",
     "index.html": "https://hazizz.github.io/hazizz-webclient/index.html",
-    "precache-manifest.d614bcf6c3c8ee8fac35cb2a2dce1c06.js": "https://hazizz.github.io/hazizz-webclient/precache-manifest.d614bcf6c3c8ee8fac35cb2a2dce1c06.js",
+    "precache-manifest.397d5a24ce08d11066c121603b33939d.js": "https://hazizz.github.io/hazizz-webclient/precache-manifest.397d5a24ce08d11066c121603b33939d.js",
     "service-worker.js": "https://hazizz.github.io/hazizz-webclient/service-worker.js",
-    "static/css/main.3dcb350b.chunk.css.map": "https://hazizz.github.io/hazizz-webclient/static/css/main.3dcb350b.chunk.css.map",
+    "static/css/main.70b5c6d6.chunk.css.map": "https://hazizz.github.io/hazizz-webclient/static/css/main.70b5c6d6.chunk.css.map",
+    "static/js/2.73785422.chunk.js.LICENSE": "https://hazizz.github.io/hazizz-webclient/static/js/2.73785422.chunk.js.LICENSE",
     "static/media/logo.png": "https://hazizz.github.io/hazizz-webclient/static/media/logo.13001b87.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.f6be953f.js",
-    "static/js/2.af261e7b.chunk.js",
-    "static/css/main.3dcb350b.chunk.css",
-    "static/js/main.7bcf81ca.chunk.js"
+    "static/js/runtime-main.38182fd3.js",
+    "static/js/2.73785422.chunk.js",
+    "static/css/main.70b5c6d6.chunk.css",
+    "static/js/main.eaea0ac9.chunk.js"
   ]
 }
