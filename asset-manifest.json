@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "https://hazizz.github.io/hazizz-webclient/static/css/main.70b5c6d6.chunk.css",
-    "main.js": "https://hazizz.github.io/hazizz-webclient/static/js/main.eaea0ac9.chunk.js",
-    "main.js.map": "https://hazizz.github.io/hazizz-webclient/static/js/main.eaea0ac9.chunk.js.map",
-    "runtime-main.js": "https://hazizz.github.io/hazizz-webclient/static/js/runtime-main.38182fd3.js",
-    "runtime-main.js.map": "https://hazizz.github.io/hazizz-webclient/static/js/runtime-main.38182fd3.js.map",
-    "static/js/2.73785422.chunk.js": "https://hazizz.github.io/hazizz-webclient/static/js/2.73785422.chunk.js",
-    "static/js/2.73785422.chunk.js.map": "https://hazizz.github.io/hazizz-webclient/static/js/2.73785422.chunk.js.map",
-    "index.html": "https://hazizz.github.io/hazizz-webclient/index.html",
-    "precache-manifest.397d5a24ce08d11066c121603b33939d.js": "https://hazizz.github.io/hazizz-webclient/precache-manifest.397d5a24ce08d11066c121603b33939d.js",
-    "service-worker.js": "https://hazizz.github.io/hazizz-webclient/service-worker.js",
-    "static/css/main.70b5c6d6.chunk.css.map": "https://hazizz.github.io/hazizz-webclient/static/css/main.70b5c6d6.chunk.css.map",
-    "static/js/2.73785422.chunk.js.LICENSE": "https://hazizz.github.io/hazizz-webclient/static/js/2.73785422.chunk.js.LICENSE",
-    "static/media/logo.png": "https://hazizz.github.io/hazizz-webclient/static/media/logo.13001b87.png"
+    "main.css": "https://client.hazizz.hu/static/css/main.70b5c6d6.chunk.css",
+    "main.js": "https://client.hazizz.hu/static/js/main.d995b4e5.chunk.js",
+    "main.js.map": "https://client.hazizz.hu/static/js/main.d995b4e5.chunk.js.map",
+    "runtime-main.js": "https://client.hazizz.hu/static/js/runtime-main.8e58ab9f.js",
+    "runtime-main.js.map": "https://client.hazizz.hu/static/js/runtime-main.8e58ab9f.js.map",
+    "static/js/2.4803b805.chunk.js": "https://client.hazizz.hu/static/js/2.4803b805.chunk.js",
+    "static/js/2.4803b805.chunk.js.map": "https://client.hazizz.hu/static/js/2.4803b805.chunk.js.map",
+    "index.html": "https://client.hazizz.hu/index.html",
+    "precache-manifest.d2c27037c74bb7a2c8e8bea603f9b0af.js": "https://client.hazizz.hu/precache-manifest.d2c27037c74bb7a2c8e8bea603f9b0af.js",
+    "service-worker.js": "https://client.hazizz.hu/service-worker.js",
+    "static/css/main.70b5c6d6.chunk.css.map": "https://client.hazizz.hu/static/css/main.70b5c6d6.chunk.css.map",
+    "static/js/2.4803b805.chunk.js.LICENSE": "https://client.hazizz.hu/static/js/2.4803b805.chunk.js.LICENSE",
+    "static/media/logo.png": "https://client.hazizz.hu/static/media/logo.13001b87.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.38182fd3.js",
-    "static/js/2.73785422.chunk.js",
+    "static/js/runtime-main.8e58ab9f.js",
+    "static/js/2.4803b805.chunk.js",
     "static/css/main.70b5c6d6.chunk.css",
-    "static/js/main.eaea0ac9.chunk.js"
+    "static/js/main.d995b4e5.chunk.js"
   ]
 }
