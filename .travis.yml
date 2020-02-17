@@ -1,13 +1,13 @@
+sudo: true
 language: node_js
 node_js:
-  - "stable"
-cache:
-  directories:
-    - node_modules
+  - node
+git:
+  quiet: true
+cache: npm
 
 env:
-  - PUBLIC_URL=https://hazizz.github.io/hazizz-webclient
-
+  - PUBLIC_URL=https://client.hazizz.hu
 
 script:
   - npm run build
@@ -17,3 +17,4 @@ deploy:
   token: $github_token
   edge: true
   local_dir: build
+  fqdn: client.hazizz.hu
