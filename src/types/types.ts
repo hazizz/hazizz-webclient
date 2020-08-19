@@ -1,56 +1,75 @@
-import {futimes} from "fs";
-
-export type AuthDetails = {
+export interface AuthResponse {
     token: string,
     refresh: string,
     scopes: null,
     expires_in: number,
     refresh_token: string,
     access_token: string,
-};
+}
 
-export type Group = {
+export enum GroupType {
+    Open = "OPEN",
+    Closed = "CLOSED",
+}
+
+export enum GroupPermission {
+    Owner = "OWNER",
+    Moderator = "MODERATOR",
+    User = "USER",
+    Null = "NULL"
+}
+
+export interface PublicGroupData {
     id: number,
     name: string,
-    groupType: "OPEN" | "CLOSED",
+    groupType: GroupType
     userCount: number
-};
+}
 
-export type User = {
+export interface PublicUserData {
     id: number,
     username: string,
     displayName: string
 }
 
-export type Subject = {
+export interface PublicSubjectData {
     id: number,
     name: string,
     subscribeOnly: boolean,
-    manager: User,
+    manager?: PublicUserData,
     subscribed: boolean
 }
 
-export type Task = {
+export enum AssignationType {
+    Group = "GROUP",
+    Subject = "SUBJECT",
+    User = "USER",
+    Thera = "THERA"
+}
+
+export interface PublicTaskData {
     id: number
     assignation: {
-        name: string,
+        name: AssignationType,
         id: number
     },
-    title: string,
+    title?: string,
     description: string,
     dueDate: string,
-    creator: User,
-    group: Group,
-    subject: Subject,
+    creator: PublicUserData,
+    group: PublicGroupData,
+    subject: PublicSubjectData,
     tags: Array<string>,
-    completed: boolean,
-    permission: string
-};
 
-export type Error = {
+    // Optionally on Hazizz tasks
+    completed: boolean,
+    permission: GroupPermission
+}
+
+export interface ErrorCodeResponse {
     errorCode: number,
     message: string,
     time: string,
     title: string,
     url: string
-};
+}

@@ -8,9 +8,9 @@ import logo from '../assets/logo.png';
 import {RouteComponentProps} from "react-router-dom";
 import queryString from "querystring";
 import {authInstance} from "../axios/instaces";
-import {AuthDetails} from "../types/types";
+import {AuthResponse} from "../types/types";
 
-interface Props extends RouteComponentProps {
+interface Props extends RouteComponentProps<{}, any, {from: {pathname: string}}> {
     saveToken: (token: string, refresh: string, expires_in: number) => void,
 }
 
@@ -89,7 +89,7 @@ class Register extends Component<Props, State> {
             })
     };
 
-    handleTokenSave = (respData: AuthDetails) => {
+    handleTokenSave = (respData: AuthResponse) => {
         let {from} = this.props.location.state || {from: {pathname: "/home"}};
 
         this.props.saveToken(respData.token, respData.refresh, respData.expires_in);

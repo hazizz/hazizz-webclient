@@ -1,1 +1,1 @@
-export const SAVE_TOKEN = "SAVE_TOKEN";
+export const SAVE_TOKEN: string = "SAVE_TOKEN";

@@ -4,7 +4,7 @@ import {hazizzInstance} from "../../axios/instaces";
 import {connect} from 'react-redux';
 import moment from "moment";
 
-import {Task} from "../../types/types";
+import {PublicTaskData} from "../../types/types";
 import TaskLabel from "./TaskLabel";
 
 type Props = {
@@ -37,7 +37,7 @@ class TaskList extends Component<Props, State> {
             }
         })
             .then(resp => {
-                const data: Array<Task> = resp.data;
+                const data: Array<PublicTaskData> = resp.data;
 
                 this.setState({
                     render: data.map(task => (<TaskLabel key={task.id}
@@ -47,7 +47,7 @@ class TaskList extends Component<Props, State> {
                                                          group={task.group.name}
                                                          subject={task.subject.name}
                                                          tags={task.tags}
-                                                         title={task.title}>
+                                                         content={task.description}>
                             {task.description}
                         </TaskLabel>)
                     )

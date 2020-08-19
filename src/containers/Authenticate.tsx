@@ -11,11 +11,11 @@ import {saveToken} from "../store/actions";
 
 import logo from '../assets/logo.png';
 
-import {AuthDetails, Error} from "../types/types";
+import {AuthResponse, ErrorCodeResponse} from "../types/types";
 
 import {RouteComponentProps} from "react-router-dom";
 
-interface Props extends RouteComponentProps {
+interface Props extends RouteComponentProps<{}, any, {from: {pathname: string}}> {
     saveToken: (token: string, refresh: string, expires_in: number) => void,
 }
 
@@ -23,12 +23,12 @@ class Authenticate extends Component<Props> {
     render() {
         let {from} = this.props.location.state || {from: {pathname: "/home"}};
 
-        const handleTokenSave = (respData: AuthDetails) => {
+        const handleTokenSave = (respData: AuthResponse) => {
             this.props.saveToken(respData.token, respData.refresh, respData.expires_in);
             this.props.history.replace(from);
         };
 
-        const handleRegister = (respData: Error, type: string, token: string) => {
+        const handleRegister = (respData: ErrorCodeResponse, type: string, token: string) => {
             if (respData.errorCode === 23)
                 this.props.history.replace({
                     pathname: this.props.location.pathname + "/consent",
@@ -51,7 +51,11 @@ class Authenticate extends Component<Props> {
                     handleTokenSave(resp.data);
                 })
                 .catch(resp => {
-                    handleRegister(resp.response.data, "google", tokenId);
+                    if (resp.response !== undefined) {
+                        handleRegister(resp.response.data, "google", tokenId);
+                    } else {
+                        console.error(resp);
+                    }
                 });
         };
 

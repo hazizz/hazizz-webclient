@@ -1,7 +1,7 @@
 import React from 'react';
 
 type Props = {
-    title: string,
+    content: string,
     dueDate: string,
     creator: string,
     group: string,
@@ -15,11 +15,11 @@ const TaskLabel = (props: Props) => {
     return (
         <div className={"taskLabel"}>
             <h1>
-                <span>{props.title}</span>
+                <span>{props.content}</span>
                 <span>
                     {props.dueDate}&nbsp;
                     <input checked={props.completed} disabled title="Fejlesztés alatt!" type="checkbox" name="completed"
-                           id={"completed" + props.title}/>
+                           id={"completed" + props.content}/>
                 </span>
             </h1>
             <p>{props.children}</p>

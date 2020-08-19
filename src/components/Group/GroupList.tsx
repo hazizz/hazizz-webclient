@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 import GroupLabel from "./GroupLabel";
 import Loader from "../Loader";
 
-import {Group} from "../../types/types";
+import {PublicGroupData} from "../../types/types";
 
 type Props = {
     isMobile: boolean,
@@ -34,7 +34,7 @@ class GroupList extends Component<Props, State> {
             headers: {"Authorization": "Bearer " + this.props.token}
         })
             .then(resp => {
-                const groupDetails: Array<Group> = resp.data;
+                const groupDetails: Array<PublicGroupData> = resp.data;
 
                 this.setState({
                     render: groupDetails.map(group => (<GroupLabel key={group.id} name={group.name} userCount={group.userCount}/>))

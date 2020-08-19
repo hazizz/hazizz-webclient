@@ -1,6 +1,7 @@
 import React, {ReactElement} from "react";
 import {Route, Redirect} from 'react-router-dom'
 import {connect} from "react-redux";
+import {RootState} from "../store/reducers";
 
 type PrivateRoute = {
     exact?: boolean,
@@ -24,9 +25,9 @@ const PrivateRoute = ({
     return route;
 };
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: RootState) => {
     const {auth} = state;
-    return {authenticated: auth.token.length > 0};
+    return {authenticated: (auth.token?.length ?? 0) > 0};
 };
 
 export default connect(mapStateToProps)(PrivateRoute);
